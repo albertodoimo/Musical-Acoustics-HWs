@@ -34,22 +34,22 @@ B = 2*alpha;
 %% ADMITTANCE
 
 w = 0:0.5:1100;
-ff = w/(2*pi);
 %adm = zeros(length(w));
-Z = zeros(length(w),0);
-Y = zeros(length(w),0);
+Z = zeros(length(w));
+Y = zeros(length(w));
 for ii = 1:length(w)
     %adm(ii) = (1i*w(ii))/ ( w(ii)^2 - 2*1i*alpha*w(ii) - w_0^2) ;
 
-    Z(ii) = R + 1i*(w(ii)*m - K/(w(ii)));
+    Z(ii) = R + 1i*(w(ii)*m/(2*pi) - K/(w(ii)/(2*pi));
     Y(ii) = 1 / Z(ii);
 
 end
 figure(1)
-plot(ff, abs(Y), 'b');
+plot(w/(2*pi), abs(Y), 'b');
 xlabel('Frequency [Hz]');
 ylabel('Admittance [m/sN]');
-grid on;
+xticks = xticks/(2*pi);
+
 
 %% EXTERNAL FORCE
 
