@@ -93,7 +93,7 @@ for jj = 1:length(f)
     for ii = 1:length(t)
         %F(jj)(ii) = 0.1 * sin(2*pi*f(jj)*t(ii));
         x(jj,ii) = C(jj)*exp(-alpha*t(ii))*cos(w_d*t(ii)+phi(jj)) + 0.1 * sin(2*pi*f(jj)*t(ii) + angle(Z(index(jj)))) / (2*pi*f(jj)*abs(Z(index(jj))));
-
+        %x(jj,ii) = C(jj)*exp(-alpha*t(ii))*cos(w_d*t(ii)+phi(jj)) + 0.1 * abs(FRF(index(jj)))*cos(2*pi*f(jj)*t(ii) + angle(FRF(index(jj))));
     end
 end
 
