@@ -4,8 +4,6 @@ clc, clear all, close all
 m  = 0.1;
 K = 25300;
 
-%K = 2530;
-
 %% RESONANCE FREQUENCY
 
 w_0 = sqrt(K/m);
@@ -115,12 +113,10 @@ figure(3)
 subplot(2, 1, 1)
 plot(t, x(3,:))
 grid on
-title('100 Hz')
 %ylim([-10^(-5), 10^(-5)])
 subplot(2, 1, 2)
 plot(t, x(4,:))
 grid on
-title('120 Hz')
 %ylim([-10^(-5), 10^(-5)])
 
 
@@ -128,12 +124,10 @@ figure(4)
 subplot(2, 1, 1)
 plot(t, x(5,:))
 grid on
-title('140 Hz')
 %ylim([-10^(-5), 10^(-5)])
 subplot(2, 1, 2)
 plot(t, x(6,:))
 grid on
-title('160 Hz')
 %ylim([-10^(-5), 10^(-5)])
 
 
