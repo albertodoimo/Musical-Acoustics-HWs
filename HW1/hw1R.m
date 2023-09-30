@@ -32,11 +32,11 @@ w_d = w_0*sqrt(1-h^2); %damped frequency
 
 %% -3dB BANDWIDTH
 
-B = 2*alpha;
+B0 = 2*alpha;
 
 %% ADMITTANCE
 
-w = 0:1:1100;
+w = 0:0.1:1100;
 ff = w/(2*pi);
 %adm = zeros(length(w));
 Z = zeros(length(w),0);
@@ -66,8 +66,27 @@ xlim([40, 160])
 yticks([-90,-45,0,45,90])
 grid on;
 
-%% EXTERNAL FORCE
+xp = [(w_0-B0/2)/2/pi,(w_0-B0/2)/2/pi,(w_0+B0/2)/2/pi,(w_0+B0/2)/2/pi];
+yp = [0,0,3,3]; 
+color = [0.9, 0.8, 0.3];
 
+figure(10)
+ha=area([(w_0-B0/2)/2/pi,(w_0+B0/2)/2/pi], [3, 3], 'FaceAlpha',0.5, 'FaceColor',color);
+hold on
+plot(ff, abs(Y), 'b');
+% a = fill(xp,yp,'b');
+% a.FaceAlpha=0.5;
+title('-3dB bandwidth');
+xlabel('Frequency [Hz]');
+ylabel('|Y| [m/sN]');
+xlim([f_0-3, f_0+3])
+xline((w_0-B0/2)/2/pi, 'r--')
+xline((w_0+B0/2)/2/pi, 'r--')
+grid on;
+
+
+%% EXTERNAL FORCE
+w = 0:1:1100;
 t = 0:0.0001:0.1;
 f = [60, 80, 100, 120, 140, 160]';
 omega = f*2*pi;
@@ -125,11 +144,11 @@ v_0 = 0;
 
 
 for jj = 1:length(f)
-    A(jj) = - abs(FRF(index(jj))) * 0.1 * cos(angle(FRF(index(jj))));
-    B(jj) =( (abs(FRF(index(jj))) * 0.1 * ((-alpha*cos(angle(FRF(index(jj)))) ) + index(jj)*sin(angle(FRF(index(jj)))) ) )      )/w_d;
-    B(jj) = B(jj)/w_d;
+    A(jj) = x_0- abs(FRF(index(jj))) * 0.1 * cos(angle(FRF(index(jj))));
+    B(jj) =( v_0 + (alpha*x_0) +abs(FRF(index(jj))) * 0.1 * ((-alpha*cos(angle(FRF(index(jj)))) ) + index(jj)*sin(angle(FRF(index(jj)))) )       )/w_d;
+%     B(jj) = B(jj)/w_d;
     C(jj) = sqrt( (A(jj)^2) + (B(jj)^2) );
-    phi(jj) = atan(B(jj)/A(jj));
+    phi(jj) = atan(-B(jj)/A(jj));
 %     phi(jj) = atan((0.1/abs(Z(index(jj)))*cos(angle(Z(index(jj)))) ...
 %         -alpha*(x_0-0.1/(index(jj)*abs(Z(index(jj))))*sin(angle(Z(index(jj)))))-v_0) ...
 %         /(w_d*(x_0-0.1/(index(jj)*abs(Z(index(jj))))*sin(angle(Z(index(jj)))))));
@@ -138,10 +157,10 @@ for jj = 1:length(f)
 
     for ii = 1:length(t)
         %F(jj)(ii) = 0.1 * sin(2*pi*f(jj)*t(ii));
-        x(jj,ii) = C(jj)*exp(-alpha*t(ii))*cos(w_d*t(ii) + phi(jj)) + 0.1 * sin(2*pi*f(jj)*t(ii) + angle(Z(index(jj)))) / (2*pi*f(jj)*abs(Z(index(jj))));
-%         transient(jj,ii) = C(jj)*exp(-alpha*t(ii))*cos(w_d*t(ii)+phi(jj));
-%         forced(jj,ii) =  0.1 * abs(FRF(index(jj)))*cos(2*pi*f(jj)*t(ii) + angle(FRF(index(jj))));
-%         x(jj,ii) = transient(jj,ii) + forced(jj,ii);
+%         x(jj,ii) = C(jj)*exp(-alpha*t(ii))*cos(w_d*t(ii) + phi(jj)) + 0.1 * sin(2*pi*f(jj)*t(ii) + angle(Z(index(jj)))) / (2*pi*f(jj)*abs(Z(index(jj))));
+        transient(jj,ii) = C(jj)*exp(-alpha*t(ii))*cos(w_d*t(ii)+phi(jj));
+        forced(jj,ii) =  0.1 * abs(FRF(index(jj)))*cos(2*pi*f(jj)*t(ii) + angle(FRF(index(jj))));
+        x(jj,ii) = transient(jj,ii) + forced(jj,ii);
 
     end
 end
