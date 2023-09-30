@@ -74,14 +74,20 @@ figure(10)
 ha=area([(w_0-B0/2)/2/pi,(w_0+B0/2)/2/pi], [3, 3], 'FaceAlpha',0.5, 'FaceColor',color);
 hold on
 plot(ff, abs(Y), 'b');
+hold on
 % a = fill(xp,yp,'b');
 % a.FaceAlpha=0.5;
 title('-3dB bandwidth');
 xlabel('Frequency [Hz]');
 ylabel('|Y| [m/sN]');
 xlim([f_0-3, f_0+3])
+line([(w_0-B0/2)/2/pi,(w_0+B0/2)/2/pi], [max(abs(Y)),max(abs(Y))], 'Color', [0,0,0]);
+hold on 
+plot(f_0,max(abs(Y)),'r o', 'LineWidth',2)
+text(f_0,max(abs(Y)),'                   \downarrow (f_0, max|Y|)', 'FontSize', 16,'VerticalAlignment','bottom','HorizontalAlignment','center')
 xline((w_0-B0/2)/2/pi, 'r--')
 xline((w_0+B0/2)/2/pi, 'r--')
+% xline((w_0)/2/pi, 'k-', 'LineWidth', 1)
 grid on;
 
 
