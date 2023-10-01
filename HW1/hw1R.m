@@ -92,7 +92,8 @@ grid on;
 
 
 %% EXTERNAL FORCE
-w = 0:1:1100;
+w = 0:0.1:1100;
+ff = w/(2*pi);
 t = 0:0.0001:0.1;
 f = [60, 80, 100, 120, 140, 160]';
 omega = f*2*pi;
@@ -125,25 +126,25 @@ for ii = 1:length(w)
     FRF(ii) = (1/K) / ( 1 - a^2 + (1i*2*h*a));
 end
 
-% a = w./w_0;
-% FRF(:) = (1/K)./((1-(a.^2))+(1i.*2*h.*a));
-
-% %%
-% figure()
-% subplot(2, 1, 1)
-% plot(w, abs(FRF(:)))
-% grid on
-% title('', 'FontSize',16)
-% xlabel('Time [s]', 'FontSize',14)
-% ylabel('Displacement [m]')
-% %ylim([-10^(-5), 10^(-5)])
-% subplot(2, 1, 2)
-% plot(w, angle(FRF(:)))
-% grid on
-% title('', 'FontSize',16)
-% xlabel('Time [s]')
-% ylabel('Displacement [m]')
-% %ylim([-0.75*10^(-3), 0.75*10^(-3)])
+figure(11)
+ha=area([(w_0-B0/2)/2/pi,(w_0+B0/2)/2/pi], [0.006, 0.006], 'FaceAlpha',0.5, 'FaceColor',color);
+hold on
+plot(ff, abs(FRF), 'b');
+hold on
+% a = fill(xp,yp,'b');
+% a.FaceAlpha=0.5;
+title('-3dB bandwidth');
+xlabel('Frequency [Hz]');
+ylabel('|FRF| [m/sN]');
+xlim([f_0-3, f_0+3])
+line([(w_0-B0/2)/2/pi,(w_0+B0/2)/2/pi], [max(abs(FRF)),max(abs(FRF))], 'Color', [0,0,0]);
+hold on 
+plot(f_0,max(abs(FRF)),'r o', 'LineWidth',2)
+text(f_0,max(abs(FRF)),'                        \downarrow (f_0, max|FRF|)', 'FontSize', 16,'VerticalAlignment','bottom','HorizontalAlignment','center')
+xline((w_0-B0/2)/2/pi, 'r--')
+xline((w_0+B0/2)/2/pi, 'r--')
+% xline((w_0)/2/pi, 'k-', 'LineWidth', 1)
+grid on;
 %%
 x_0 = 0;
 v_0 = 0;
