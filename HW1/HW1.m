@@ -67,7 +67,7 @@ grid on
 subplot(212)
 plot(ff, angle(Y), 'b');
 xlabel('Frequency [Hz]','interpreter','latex', FontSize=axlabelsize);
-ylabel('$\angle Y$    [deg]','interpreter','latex', FontSize=axlabelsize);
+ylabel('$\angle Y$    [rad]','interpreter','latex', FontSize=axlabelsize);
 xlim([50, 170]);
 title('Admittance phase','interpreter','latex', FontSize=titlesize);
 grid on 
@@ -77,7 +77,7 @@ figure('Renderer', 'painters', 'Position', [10 10 1000 600])
 subplot(211) 
 plot(ff, abs(Z), 'b');
 xlabel('Frequency [Hz]','interpreter','latex', FontSize=axlabelsize);
-ylabel('$|Z|$ [m/sN]','interpreter','latex', FontSize=axlabelsize);
+ylabel('$|Z|$ [Ns/m]','interpreter','latex', FontSize=axlabelsize);
 xlim([50, 170]);
 % legend('','Fontsize',16,'interpreter','latex');
 title('Impedance magnitude','interpreter','latex', FontSize=titlesize);
@@ -85,13 +85,13 @@ grid on
 subplot(212)
 plot(ff, angle(Z), 'b');
 xlabel('Frequency [Hz]','interpreter','latex', FontSize=axlabelsize);
-ylabel('$\angle Z$    [deg]','interpreter','latex', FontSize=axlabelsize);
+ylabel('$\angle Z$    [rad]','interpreter','latex', FontSize=axlabelsize);
 xlim([50, 170]);
 title('Impedance phase','interpreter','latex', FontSize=titlesize);
 grid on 
 saveas(gcf,strcat("Plots/","Impedance",".png"));
 
-%% EXTERNAL FORCE
+%% EXTERNAL FORCE - RECEPTANCE - TOTAL RESPONSE
 
 t = 0:0.0001:2;
 f = [60, 80, 100, 120, 140, 160]';
@@ -113,6 +113,27 @@ FRF = zeros(1,length(w));
 a = w./w_0;
 %FRF(:) = (1/K)./((1-(a.^2))+(1i.*2*h.*a));
 FRF(:) = (1/m)./((w_0^2-(w.^2))+(1i.*w.*2.*alpha));
+
+% receptance plot
+figure('Renderer', 'painters', 'Position', [10 10 1000 600])
+subplot(211) 
+plot(ff, abs(FRF), 'b');
+xlabel('Frequency [Hz]','interpreter','latex', FontSize=axlabelsize);
+ylabel('$|H|$ [m/N]','interpreter','latex', FontSize=axlabelsize);
+xlim([50, 170]);
+% legend('','Fontsize',16,'interpreter','latex');
+title('Receptance magnitude','interpreter','latex', FontSize=titlesize);
+grid on 
+subplot(212)
+plot(ff, angle(FRF), 'b');
+xlabel('Frequency [Hz]','interpreter','latex', FontSize=axlabelsize);
+ylabel('$\angle H$    [rad]','interpreter','latex', FontSize=axlabelsize);
+xlim([50, 170]);
+title('Receptance phase','interpreter','latex', FontSize=titlesize);
+grid on 
+saveas(gcf,strcat("Plots/","Receptance",".png"));
+
+
 x_0 = 0;
 v_0 = 0;
 
@@ -159,7 +180,7 @@ end
 % title('free')
 % %ylim([-0.75*10^(-3), 0.75*10^(-3)])
 
-%% TOTAL RESPONSE
+% Plots 
 
 i = 0;
 figure('Renderer', 'painters', 'Position', [10 10 1000 600])
@@ -214,7 +235,7 @@ hold on
 % a.FaceAlpha=0.5;
 title('-3dB bandwidth','interpreter','latex', FontSize=titlesize);
 xlabel('Frequency [Hz]','interpreter','latex', FontSize=axlabelsize);
-ylabel('$|H|$ [m/sN]','interpreter','latex', FontSize=axlabelsize);
+ylabel('$|H|$ [m/N]','interpreter','latex', FontSize=axlabelsize);
 xlim([f_0-3, f_0+3]);
 line([(w_0-Bw/2)/2/pi,(w_0+Bw/2)/2/pi], [max(abs(FRF)),max(abs(FRF))], 'Color', [0,0,0]);
 hold on 
