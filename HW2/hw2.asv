@@ -62,9 +62,10 @@ m = ro_s*L*S;   %mass of the string
 K = r/2;        %gyration radius
 
 %% Tension of the string to get same fundam. freq.
-mu = ro_s * (r^2);
-T = (f_0^2) * 4 * (L^2) * pi * mu;
-% T = (f_0^2) * 4 * (L^2) * pi * ro_s * (r^2)-((120000000000*K^2*pi*S)/L^2);
+
+% T = (f_0^2) * 4 * (L^2) * pi * ro_s * (r^2);
+B = pi*E*S
+
 %% Coupling
 threshold = (pi^2) / (4*(Q^2)); 
 str_pl = m/M;
