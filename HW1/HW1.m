@@ -141,21 +141,17 @@ for jj = 1:length(f)
     A(jj) = x_0 - abs(FRF(index(jj)))*0.1*sin(angle(FRF(index(jj))));
     B(jj) = v_0 + (alpha*x_0) + abs(FRF(index(jj)))*0.1* (+alpha*sin(angle(FRF(index(jj)))) - index(jj)*cos(angle(FRF(index(jj)))) ) ;
     B(jj) = B(jj)/w_d;
-
-    Az(jj) = - (0.1*sin(angle(Z(index(jj))))/(2*pi*f(jj)*abs(Z(index(jj)))));
-    Bz(jj) = - 0.1/(w_d*abs(Z(index(jj))))*( (+alpha./(2*pi*f(jj)))*sin(angle(Z(index(jj)))) + cos(angle(Z(index(jj)))) );
-
-    C(jj) = sqrt( (Az(jj)^2) + (Bz(jj)^2) );
-    phi(jj) = atan(-Bz(jj)/Az(jj));
+    C(jj) = sqrt( (A(jj)^2) + (B(jj)^2) );
+    phi(jj) = atan(-B(jj)/A(jj));
     for ii = 1:length(t)
         %F(jj)(ii) = 0.1 * sin(2*pi*f(jj)*t(ii));
 %         x(jj,ii) = C(jj)*exp(-alpha*t(ii))*cos(w_d*t(ii)+phi(jj)) + 0.1 * sin(2*pi*f(jj)*t(ii) + angle(Z(index(jj)))) / (2*pi*f(jj)*abs(Z(index(jj))));
-        forced(jj,ii) = + 0.1 * sin(2*pi*f(jj)*t(ii) + angle(Z(index(jj)))) / (2*pi*f(jj)*abs(Z(index(jj))));
-        free(jj,ii) = C(jj)*exp(-alpha*t(ii))*cos(w_d*t(ii)-phi(jj));
+        % forced(jj,ii) = + 0.1 * sin(2*pi*f(jj)*t(ii) + angle(Z(index(jj)))) / (2*pi*f(jj)*abs(Z(index(jj))));
+        
 
         % x(jj,ii) = exp(-alpha*t(ii))*(  A(jj)*cos(w_d*t(ii))+B(jj)*sin(w_d*t(ii)) )+ 0.1 * abs(FRF(index(jj)))*cos(2*pi*f(jj)*t(ii) + angle(FRF(index(jj))));
-%         free(jj,ii) = exp(-alpha*t(ii))*(  A(jj)*cos(w_d*t(ii))+B(jj)*sin(w_d*t(ii)) );
-%         forced(jj,ii) = 0.1 * abs(FRF(index(jj)))*sin(2*pi*f(jj)*t(ii) + angle(FRF(index(jj))));
+        free(jj,ii) = exp(-alpha*t(ii))*(  A(jj)*cos(w_d*t(ii))+B(jj)*sin(w_d*t(ii)) );
+        forced(jj,ii) = 0.1 * abs(FRF(index(jj)))*sin(2*pi*f(jj)*t(ii) + angle(FRF(index(jj))));
         x(jj,ii)= forced(jj,ii) + free(jj,ii);
     end
 
@@ -171,18 +167,18 @@ end
 % title('phase')
 
 % plot free forced 
-
-figure(22)
-subplot(2, 1, 1)
-plot(t, forced(2,:))
-grid on
-title('forced')
-%ylim([-10^(-5), 10^(-5)])
-subplot(2, 1, 2)
-plot(t, free(2,:))
-grid on
-title('free')
-%ylim([-0.75*10^(-3), 0.75*10^(-3)])
+% 
+% figure(22)
+% subplot(2, 1, 1)
+% plot(t, forced(2,:))
+% grid on
+% title('forced')
+% %ylim([-10^(-5), 10^(-5)])
+% subplot(2, 1, 2)
+% plot(t, free(2,:))
+% grid on
+% title('free')
+% %ylim([-0.75*10^(-3), 0.75*10^(-3)])
 
 % Plots 
 

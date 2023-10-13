@@ -8,7 +8,7 @@ E = 69*10^9;    % Young's modulus
 ro = 2700;      % volumetric density
 ni = 0.334;     % Poisson's ratio
 
-M = a^2 * ro;   % mass of the plate
+M = a^2 * ro * h;   % mass of the plate
 
 %%  Propagation speed of quasi-long. and long. waves
 c_l = sqrt(E/ ( ro*(1-ni^2) ) );        %quasi-long.
@@ -50,6 +50,7 @@ hold on
 fill(x,y,[184 142 90]./255);
 xlabel('x','FontSize',20);
 ylabel('y','FontSize',20);
+grid minor;
 %% Attached string
 % properties
 ro_s = 5000;    %volum. dens.
@@ -64,12 +65,26 @@ K = r/2;        %gyration radius
 
 T = (f_0^2) * 4 * (L^2) * pi * ro_s * (r^2); 
 
+%% Coupling
+threshold = (pi^2) / (4*(Q^2)); 
+str_pl = m/M;
+
+if str_pl<threshold
+    coupling = 'weak';
+else
+    coupling = 'strong';
+end
+
+f1 = f_0*(1-0.02);
+f2 = f_0*(1+0.02);
 
 
+%% percentage diff. between modes of string and plate
+f_string = [1,2,3,4,5,6].*f_0;
 
-
-
-
-
-
+for i=1:1:length(f_string)
+    for j=1:1:length(f_string)
+    perc(i,j) = (f_string(j)-f_modal(i))/f_modal(i) *100;
+    end
+end
 
