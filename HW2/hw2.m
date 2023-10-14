@@ -66,6 +66,7 @@ mu = ro_s * (r^2);
 T = (f_0^2) * 4 * (L^2) * pi * mu; 
 
 %% Coupling
+f_string = [1,2,3,4,5,6].*f_0;
 threshold = (pi^2) / (4*(Q^2)); 
 str_pl = m/M;
 
@@ -75,16 +76,36 @@ else
     coupling = 'strong';
 end
 
-f1 = f_0*(1-0.02);
-f2 = f_0*(1+0.02);
+f1couple_min = f_modal(1)*(1-0.02);
+f1couple_plus = f_modal(1)*(1+0.02);
 
 
 %% percentage diff. between modes of string and plate
-f_string = [1,2,3,4,5,6].*f_0;
 
-for i=1:1:length(f_string)
+
+for i=1:1:length(f_modal)
     for j=1:1:length(f_string)
     perc(i,j) = (f_string(j)-f_modal(i))/f_modal(i) *100;
     end
 end
+
+
+str_pl2 = m/4/M;
+if str_pl2<threshold
+    coupling2 = 'weak';
+else
+    coupling2 = 'strong';
+end
+f2couple_min = f_modal(2)*(1-0.032);
+f2couple_plus = f_modal(2)*(1+0.013);
+
+
+str_pl3 = m/9/M;
+if str_pl3<threshold
+    coupling3 = 'weak';
+else
+    coupling3 = 'strong';
+end
+f3couple_min = f_modal(4)*(1-0.02);
+f3couple_plus = f_modal(4)*(1+0.02);
 
