@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<archive>
+  <model>
+    <material tag="mat1" type="Common" component="">
+      <label label="isotropic Engelmann Spruce"/>
+      <propertyGroup tag="def">
+        <set name="density" value="350"/>
+        <set name="poissonsratio" value="0.422"/>
+        <set name="youngsmodulus" value="9.79*10^9"/>
+      </propertyGroup>
+    </material>
+  </model>
+</archive>
+
