@@ -1,6 +1,18 @@
-clc, clear all, close all
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% square thin plate
+clc
+clear all
+close all
+
+if not(isfolder("Plots"))
+    mkdir("Plots")
+end
+addpath('Plots')
+
+axlabelsize = 16;
+titlesize = 22;
+legendsize = 16;
+
+%% DATA: square thin plate
+
 a = 0.15;       % side
 h = 0.001;     % thickness
 % material properties
@@ -24,11 +36,34 @@ figure(1)
 plot(f, v);
 title('Propagation speed of bending waves v(f)');
 
+
+figure('Renderer', 'painters', 'Position', [10 10 1000 600])
+ 
+plot(f,v,'b');
+xlabel('Frequency [Hz]','interpreter','latex', FontSize=axlabelsize);
+ylabel('$v(f)$ [m/s]','interpreter','latex', FontSize=axlabelsize);
+title('Propagation speed of bending waves','interpreter','latex', FontSize=titlesize);
+grid minor  
+saveas(gcf,strcat("Plots/","Speed of bending waves",".png"));
+
 %% Modal frequencies of the first six bending modes
 % CLAMPED EDGES
 f_ratios = [1, 2.04, 2.04, 3.01, 3.66, 3.67];
 f_0 = 1.654*c_l*h/a^2;
 f_modal = f_0.*f_ratios;
+
+% x = 1:0.01:a;
+% y=x;
+% 
+% w = sin(m*pi*x/a) * sin(n*pi+y/a) * f_ratios(1)  
+% 
+% Where: 
+% 
+% A_mn is the amplitude for the mode (m, n). 
+% m and n are mode numbers, and for the first 6 modes, m and n can take values (1, 1), (2, 1), (1, 2), (2, 2), (3, 1), and (1, 3). 
+% a is the side length of the square plate. 
+% f_mn is a mode-dependent constant that can be calculated based on the specific mode. 
+% ω is the angular frequency of the mode.
 
 %% Sitka spruce
 E_l = 12; %1.3*10^10
