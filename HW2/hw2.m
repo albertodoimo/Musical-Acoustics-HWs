@@ -32,11 +32,6 @@ f = 0:0.1:1500;
 
 v = sqrt(1.8.*f.*h*c_l);
 
-figure(1)
-plot(f, v);
-title('Propagation speed of bending waves v(f)');
-
-
 figure('Renderer', 'painters', 'Position', [10 10 1000 600])
  
 plot(f,v,'b');
