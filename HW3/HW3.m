@@ -33,3 +33,33 @@ M_h = m_h/(A_h^2); %[Kg/m^4]
 C_p = (A_p^2)/K_p; %[N/m^5] top plate compliance
 C_v = V/(rho*c^2); %[N/m^5] 
 
+%% Impulse response
+
+Fs = 1000;
+impulse = squeeze(out.impulse.Data);
+current = squeeze(out.current.Data);
+f = [0:Fs/length(impulse):Fs-1/length(impulse)]';
+
+%Z = fft(impulse)./(fft(current).*1i.*2.*pi.*f);
+
+Z = -fft(impulse)./(fft(current)*4*pi^2.*f.^2);
+% plot
+figure('Renderer', 'painters', 'Position', [10 10 1000 600]);
+subplot 211;
+plot(f,db(abs(Z)),'b-',LineWidth=2);
+xlabel('Frequency [Hz]','interpreter','latex', FontSize=axlabelsize);
+ylabel('$|Z|$ [Ns/m^5]','interpreter','latex', FontSize=axlabelsize);
+% legend('','Fontsize',16,'interpreter','latex');
+title('Impedence magnitude','interpreter','latex', FontSize=titlesize);
+grid on
+subplot 212;
+plot(f,angle(Z),'b-',LineWidth=2);
+xlabel('Frequency [Hz]','interpreter','latex', FontSize=axlabelsize);
+ylabel('$\angle{Z}$ [rad]','interpreter','latex', FontSize=axlabelsize);
+% legend('','Fontsize',16,'interpreter','latex');
+title('Impedence phase','interpreter','latex', FontSize=titlesize);
+grid on 
+sgtitle('Bridge impedence', FontSize=titlesize, Interpreter='Latex');
+
+% saveas(gcf,strcat("Plots/","Receptance",".png"));
+
