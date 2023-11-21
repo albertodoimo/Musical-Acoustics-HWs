@@ -33,6 +33,10 @@ M_h = m_h/(A_h^2); %[Kg/m^4]
 C_p = (A_p^2)/K_p; %[N/m^5] top plate compliance
 C_v = V/(rho*c^2); %[N/m^5] 
 
+%% Simulink 
+
+out = sim('bridge_impedance.slx');
+
 %% Impulse response
 
 Fs = 1000;
