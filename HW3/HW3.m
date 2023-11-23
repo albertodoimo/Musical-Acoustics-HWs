@@ -36,34 +36,49 @@ C_v = V/(rho*c^2); %[N/m^5]
 %% Simulink 
 
 out = sim('bridge_impedance.slx');
+%out = sim('HW_3.slx');
 
-%% Impulse response
+%% 1) Impedance
 
 Fs = 1000;
 impulse = squeeze(out.impulse.Data);
-current = squeeze(out.current.Data);
+current = -squeeze(out.current.Data);
 f = [0:Fs/length(impulse):Fs-1/length(impulse)]';
+omega = 2*pi.*f;
 
-%Z = fft(impulse)./(fft(current).*1i.*2.*pi.*f);
+Z = fft(impulse)./(fft(current));
+H = fft(current)./(fft(impulse));
+%Z = -fft(impulse)./(fft(current)*4*pi^2.*f.^2);
+I = -(4*pi^2.*f.^2).*fft(current)./(fft(impulse));
 
-Z = -fft(impulse)./(fft(current)*4*pi^2.*f.^2);
+
 % plot
 figure('Renderer', 'painters', 'Position', [10 10 1000 600]);
 subplot 211;
-plot(f,db(abs(Z)),'b-',LineWidth=2);
-xlabel('Frequency [Hz]','interpreter','latex', FontSize=axlabelsize);
+plot(f,db(abs(H)),'b-',LineWidth=2);
+xlabel('Frequency ','interpreter','latex', FontSize=axlabelsize);
 ylabel('$|Z|$ [Ns/m^5]','interpreter','latex', FontSize=axlabelsize);
+xlim([1 501]);
+%ylim([0 100]);
 % legend('','Fontsize',16,'interpreter','latex');
 title('Impedence magnitude','interpreter','latex', FontSize=titlesize);
 grid on
 subplot 212;
-plot(f,angle(Z),'b-',LineWidth=2);
-xlabel('Frequency [Hz]','interpreter','latex', FontSize=axlabelsize);
+plot(f,angle(H),'b-',LineWidth=2);
+xlabel('Frequency ','interpreter','latex', FontSize=axlabelsize);
 ylabel('$\angle{Z}$ [rad]','interpreter','latex', FontSize=axlabelsize);
+xlim([1 500]);
 % legend('','Fontsize',16,'interpreter','latex');
 title('Impedence phase','interpreter','latex', FontSize=titlesize);
 grid on 
 sgtitle('Bridge impedence', FontSize=titlesize, Interpreter='Latex');
 
 % saveas(gcf,strcat("Plots/","Receptance",".png"));
+
+%% 2) 
+
+Z/abs(abs(Z));
+
+
+
 
