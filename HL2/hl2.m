@@ -28,6 +28,7 @@ d1sweep = readtable('Csv/d1sweep.csv');
 d1_m = readtable('Csv/d1modes.csv');
 d3_m = readtable('Csv/d3modes.csv');
 d8_m = readtable('Csv/d8modes.csv');
+double_hel = readtable('Csv/couplemodes.csv');
 
 %% a) Geometry
 
@@ -44,18 +45,18 @@ U_d1 = table2array(d1(:,3));
 % plot
 figure('Renderer', 'painters', 'Position', [10 10 1000 600]);
 subplot 211;
-plot(freq,db(abs(P_d1./U_d1)),'b-',LineWidth=2);
+plot(freq,db(abs(P_d1./U_d1)),'b-',LineWidth=1);
 xlabel('Frequency [Hz]','interpreter','latex', FontSize=axlabelsize);
 ylabel('$|Z| [Ns/m^5]$','interpreter','latex', FontSize=axlabelsize);
 % legend('','Fontsize',16,'interpreter','latex');
 title('Impedence magnitude','interpreter','latex', FontSize=titlesize);
 grid on
 subplot 212;
-plot(freq,angle(-P_d1./U_d1),'b-',LineWidth=2);
+plot(freq,angle(-P_d1./U_d1),'b-',LineWidth=1);
 xlabel('Frequency [Hz]','interpreter','latex', FontSize=axlabelsize);
 ylabel('$\angle{Z}$ [rad]','interpreter','latex', FontSize=axlabelsize);
 % legend('','Fontsize',16,'interpreter','latex');
-title('Impedence ','interpreter','latex', FontSize=titlesize);
+title('Impedence phase','interpreter','latex', FontSize=titlesize);
 grid on 
 sgtitle('d1 = 0.01 [m]', FontSize=titlesize, Interpreter='Latex');
 
@@ -73,57 +74,204 @@ for i = 1:3
         U_d1sweep(:,i)=table2array(d1sweep(ii==d(i),6));
 
         % plot
-        figure(3)
-        %figure('Renderer', 'painters', 'Position', [10 10 1000 600]);
+        fig3 = figure(3);
+        fig3.Position = [10 10 1000 600];
+       
         hold on
         subplot(3,1,i);
         plot(freq,db(abs(P_d1sweep(:,i)./U_d1sweep(:,i))),'b-',LineWidth=1);
         xlabel('Frequency [Hz]','interpreter','latex', FontSize=axlabelsize);
         ylabel('$|Z| [Ns/m^5]$','interpreter','latex', FontSize=axlabelsize);
-        title('Impedence magnitude','interpreter','latex', FontSize=titlesize);
-        sgtitle('d1 sweep magnitude');
+        title(strcat('d=',num2str(d(i)),'[m]'),'interpreter','latex', FontSize=titlesize);
+        sgtitle('d1 sweep magnitude', FontSize=titlesize, Interpreter='Latex');
+        grid on
+        % saveas(gcf,strcat("Plots/","",".png"));
 
-        figure(4)
-        %figure('Renderer', 'painters', 'Position', [10 10 1000 600]);
+
+        fig4 = figure(4);
+        fig4.Position = [10 10 1000 600];
         hold on
         subplot(3,1,i);
         plot(freq,angle(P_d1sweep(:,i)./U_d1sweep(:,i)),'b-',LineWidth=1);
         xlabel('Frequency [Hz]','interpreter','latex', FontSize=axlabelsize);
         ylabel('$\angle{Z}$ [rad]','interpreter','latex', FontSize=axlabelsize);
-        title('Impedence magnitude','interpreter','latex', FontSize=titlesize);
-        sgtitle('d1 sweep phase');
-
+        title(strcat('d=',num2str(d(i)),'[m]'),'interpreter','latex', FontSize=titlesize);
+        grid on
+        sgtitle('d1 sweep phase', FontSize=titlesize, Interpreter='Latex');
+        % saveas(gcf,strcat("Plots/","",".png"));
 end
 
-%% d) d1_m
+
+%% d) d1 modes
 
 M = table2array(d1_m(:,1));
 mode = unique(table2array(d1_m(:,1)));
 freq = unique(table2array(d1_m(:,3)));
 
-
 for i = 1:4
-        P_d1_m(:,i)=table2array(d1_m(M==mode(i),5));
-        %P_d1_m(:,:)=5000;
-        U_d1_m(:,i)=table2array(d1_m(M==mode(i),6));
+        P_d1_m(:,i)=table2array(d1_m(M==mode(i),6));
+        U_d1_m(:,i)=table2array(d1_m(M==mode(i),7));
 
-        figure(4)
+        % plot
+        fig5 = figure(5);
+        fig5.Position = [10 10 1000 600];
+       
         hold on
         subplot(2,2,i);
-        plot(freq,db(abs(P_d1_m./U_d1_m(:,i))));
-        hold on
-        sgtitle('d1 mode')
-
-        figure(5)
-        subplot(2,2,i);
-        plot(freq,angle(-P_d1_m./U_d1_m(:,i)));
-        sgtitle('d1 mode phase')
-
+        plot(freq,db(abs(P_d1_m(:,i)./U_d1_m(:,i))),'b-',LineWidth=1);
+        xlabel('Frequency [Hz]','interpreter','latex', FontSize=axlabelsize);
+        ylabel('$|Z| [Ns/m^5]$','interpreter','latex', FontSize=axlabelsize);
+        title(strcat('m=',num2str(i)),'interpreter','latex', FontSize=titlesize);
+        sgtitle('d = 0.01 [m]', FontSize=titlesize, Interpreter='Latex');
+        grid on
+        % saveas(gcf,strcat("Plots/","",".png"));
+       
 end
 
-%% e) 
+for m = 1:numel(mode)
+    P(:,m) = table2array(d1_m(M==mode(m),6));
+    U(:,m) = table2array(d1_m(M==mode(m),7));
+    
+end
 
-%% Data
+sum_d1 = abs(P(:,1)./U(:,1))+...
+   abs(P(:,2)./U(:,2))+...
+    abs(P(:,3)./U(:,3))+...
+    abs(P(:,4)./U(:,4));
+
+fig6 = figure(6);
+fig6.Position = [10 10 1000 600];
+
+plot(freq,db(sum_d1),'b-',LineWidth=1);
+xlabel('Frequency [Hz]','interpreter','latex', FontSize=axlabelsize);
+ylabel('$|Z| [Ns/m^5]$','interpreter','latex', FontSize=axlabelsize);
+sgtitle('d = 0.01 [m], All modes', FontSize=titlesize, Interpreter='Latex');
+grid on
+% saveas(gcf,strcat("Plots/","",".png"));
+
+%% d) d3 modes
+
+M = table2array(d3_m(:,2));
+mode = unique(table2array(d3_m(:,2)));
+freq = unique(table2array(d3_m(:,3)));
+
+for i = 1:4
+        P_d3_m(:,i)=table2array(d3_m(M==mode(i),6));
+        U_d3_m(:,i)=table2array(d3_m(M==mode(i),7));
+
+        % plot
+        fig7 = figure(7);
+        fig7.Position = [10 10 1000 600];
+       
+        hold on
+        subplot(2,2,i);
+        plot(freq,db(abs(P_d3_m(:,i)./U_d3_m(:,i))),'b-',LineWidth=1);
+        xlabel('Frequency [Hz]','interpreter','latex', FontSize=axlabelsize);
+        ylabel('$|Z| [Ns/m^5]$','interpreter','latex', FontSize=axlabelsize);
+        title(strcat('m=',num2str(i)),'interpreter','latex', FontSize=titlesize);
+        sgtitle('d = 0.03 [m]', FontSize=titlesize, Interpreter='Latex');
+        grid on
+        % saveas(gcf,strcat("Plots/","",".png"));
+       
+end
+
+for m = 1:numel(mode)
+    P(:,m) = table2array(d1_m(M==mode(m),6));
+    U(:,m) = table2array(d1_m(M==mode(m),7));
+    
+end
+
+sum_d3 = abs(P(:,1)./U(:,1))+...
+   abs(P(:,2)./U(:,2))+...
+    abs(P(:,3)./U(:,3))+...
+    abs(P(:,4)./U(:,4));
+
+fig8 = figure(8);
+fig8.Position = [10 10 1000 600];
+
+plot(freq,db(sum_d3),'b-',LineWidth=1);
+xlabel('Frequency [Hz]','interpreter','latex', FontSize=axlabelsize);
+ylabel('$|Z| [Ns/m^5]$','interpreter','latex', FontSize=axlabelsize);
+sgtitle('d = 0.03 [m], All modes', FontSize=titlesize, Interpreter='Latex');
+grid on
+% saveas(gcf,strcat("Plots/","",".png"));
+
+%% d) d8 modes
+
+M = table2array(d8_m(:,1));
+mode = unique(table2array(d8_m(:,1)));
+freq = unique(table2array(d8_m(:,3)));
+
+for i = 1:4
+        P_d8_m(:,i)=table2array(d8_m(M==mode(i),6));
+        U_d8_m(:,i)=table2array(d8_m(M==mode(i),7));
+
+        % plot
+        fig9 = figure(9);
+        fig9.Position = [10 10 1000 600];
+       
+        hold on
+        subplot(2,2,i);
+        plot(freq,db(abs(P_d8_m(:,i)./U_d8_m(:,i))),'b-',LineWidth=1);
+        xlabel('Frequency [Hz]','interpreter','latex', FontSize=axlabelsize);
+        ylabel('$|Z| [Ns/m^5]$','interpreter','latex', FontSize=axlabelsize);
+        title(strcat('m=',num2str(i)),'interpreter','latex', FontSize=titlesize);
+        sgtitle('d = 0.08 [m]', FontSize=titlesize, Interpreter='Latex');
+        grid on
+        % saveas(gcf,strcat("Plots/","",".png"));
+       
+end
+
+for m = 1:numel(mode)
+    P(:,m) = table2array(d1_m(M==mode(m),6));
+    U(:,m) = table2array(d1_m(M==mode(m),7));
+    
+end
+
+sum_d8 = abs(P(:,1)./U(:,1))+...
+   abs(P(:,2)./U(:,2))+...
+    abs(P(:,3)./U(:,3))+...
+    abs(P(:,4)./U(:,4));
+
+fig10 = figure(10);
+fig10.Position = [10 10 1000 600];
+
+plot(freq,db(sum_d8),'b-',LineWidth=1);
+xlabel('Frequency [Hz]','interpreter','latex', FontSize=axlabelsize);
+ylabel('$|Z| [Ns/m^5]$','interpreter','latex', FontSize=axlabelsize);
+sgtitle('d = 0.08 [m], All modes', FontSize=titlesize, Interpreter='Latex');
+grid on
+% saveas(gcf,strcat("Plots/","",".png"));
+
+%% e) Double helmoltz
+
+M = table2array(double_hel(:,1));
+mode = unique(table2array(double_hel(:,1)));
+freq = unique(table2array(double_hel(:,2)));
+
+for i = 1:4
+        P_2hel(:,i)=table2array(double_hel(M==mode(i),3));
+        U_2hel(:,i)=table2array(double_hel(M==mode(i),4));
+
+        % plot
+        fig8 = figure(8);
+        fig8.Position = [10 10 1000 600];
+       
+        hold on
+        subplot(2,2,i);
+        plot(freq,db(abs(P_2hel(:,i)./U_2hel(:,i))),'b-',LineWidth=1);
+        xlabel('Frequency [Hz]','interpreter','latex', FontSize=axlabelsize);
+        ylabel('$|Z| [Ns/m^5]$','interpreter','latex', FontSize=axlabelsize);
+        title(strcat('m=',num2str(i)),'interpreter','latex', FontSize=titlesize);
+        sgtitle('Coupled resonators ', FontSize=titlesize, Interpreter='Latex');
+        grid on
+        % saveas(gcf,strcat("Plots/","",".png"));
+       
+end
+
+%% f) simulink
+
+% Data
 rho=1.204;
 c=343;
 
@@ -135,8 +283,6 @@ S1 = pi*(d_1/2)^2;
 S2 = pi*(d_2/2)^2; %[m^2]
 V1 = 4/3*pi*(D/2)^3;
 V2 = 4/3*pi*(D2/2)^3;
-
-%% f) simulink
 
 C_1 = V1/(rho*c^2); %[N/m^5] 
 C_2 = V2/(rho*c^2); %[N/m^5] 
