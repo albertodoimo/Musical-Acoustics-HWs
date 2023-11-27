@@ -35,7 +35,7 @@ C_v = V/(rho*c^2); %[N/m^5]
 
 %% Simulink 
 
-out = sim('bridge_impedance.slx');
+out = sim('bridge_impedance_imp.slx');
 %out = sim('HW_3.slx');
 
 %% 1) Impedance
@@ -50,21 +50,21 @@ Z = fft(impulse)./(fft(current));
 H = fft(current)./(fft(impulse));
 %Z = -fft(impulse)./(fft(current)*4*pi^2.*f.^2);
 I = -(4*pi^2.*f.^2).*fft(current)./(fft(impulse));
-
+Z = Z/max(abs(Z));
 
 % plot
 figure('Renderer', 'painters', 'Position', [10 10 1000 600]);
 subplot 211;
-plot(f,db(abs(H)),'b-',LineWidth=2);
+plot(f,db(abs(Z)),'b-',LineWidth=2);
 xlabel('Frequency ','interpreter','latex', FontSize=axlabelsize);
-ylabel('$|Z|$ [Ns/m^5]','interpreter','latex', FontSize=axlabelsize);
-xlim([1 501]);
+ylabel('$|Z| [Ns/m^5]$','interpreter','latex', FontSize=axlabelsize);
+xlim([0 501]);
 %ylim([0 100]);
 % legend('','Fontsize',16,'interpreter','latex');
 title('Impedence magnitude','interpreter','latex', FontSize=titlesize);
 grid on
 subplot 212;
-plot(f,angle(H),'b-',LineWidth=2);
+plot(f,angle(Z),'b-',LineWidth=2);
 xlabel('Frequency ','interpreter','latex', FontSize=axlabelsize);
 ylabel('$\angle{Z}$ [rad]','interpreter','latex', FontSize=axlabelsize);
 xlim([1 500]);
@@ -75,10 +75,18 @@ sgtitle('Bridge impedence', FontSize=titlesize, Interpreter='Latex');
 
 % saveas(gcf,strcat("Plots/","Receptance",".png"));
 
-%% 2) 
-
-Z/abs(abs(Z));
-
+% 2) 
+% 
+% Z = Z./max(abs(Z));
+% 
+% H_E1_R1 = 
+% H_E2_R1 = 
+% H_loop = 
+% R_b = 
+% 
+% 
+% H_E_B = 0.5*(1+H_E2_R1).*(H_E1_R1./(1-H_loop)).*(Z./omega).*(1-R_b);
+% 
 
 
 
