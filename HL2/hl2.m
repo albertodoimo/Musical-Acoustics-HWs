@@ -254,8 +254,8 @@ for i = 1:4
         U_2hel(:,i)=table2array(double_hel(M==mode(i),4));
 
         % plot
-        fig8 = figure(8);
-        fig8.Position = [10 10 1000 600];
+        fig11 = figure(11);
+        fig11.Position = [10 10 1000 600];
        
         hold on
         subplot(2,2,i);
@@ -268,6 +268,27 @@ for i = 1:4
         % saveas(gcf,strcat("Plots/","",".png"));
        
 end
+
+for m = 1:numel(mode)
+    P(:,m) = table2array(double_hel(M==mode(m),3));
+    U(:,m) = table2array(double_hel(M==mode(m),4));
+    
+end
+
+sum_double = abs(P(:,1)./U(:,1))+...
+   abs(P(:,2)./U(:,2))+...
+    abs(P(:,3)./U(:,3))+...
+    abs(P(:,4)./U(:,4));
+
+fig12 = figure(12);
+fig12.Position = [10 10 1000 600];
+
+plot(freq,db(sum_double),'b-',LineWidth=1);
+xlabel('Frequency [Hz]','interpreter','latex', FontSize=axlabelsize);
+ylabel('$|Z| [Ns/m^5]$','interpreter','latex', FontSize=axlabelsize);
+sgtitle('Coupled resonators, All modes', FontSize=titlesize, Interpreter='Latex');
+grid on
+% saveas(gcf,strcat("Plots/","",".png"));
 
 %% f) simulink
 
