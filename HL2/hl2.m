@@ -58,7 +58,7 @@ ylabel('$\angle{Z}$ [rad]','interpreter','latex', FontSize=axlabelsize);
 % legend('','Fontsize',16,'interpreter','latex');
 title('Impedence phase','interpreter','latex', FontSize=titlesize);
 grid on 
-sgtitle('d1 = 0.01 [m]', FontSize=titlesize, Interpreter='Latex');
+sgtitle('d1 = 0.04 [m]', FontSize=titlesize, Interpreter='Latex');
 
 % saveas(gcf,strcat("Plots/","Receptance",".png"));
 
@@ -176,8 +176,8 @@ for i = 1:4
 end
 
 for m = 1:numel(mode)
-    P(:,m) = table2array(d1_m(M==mode(m),6));
-    U(:,m) = table2array(d1_m(M==mode(m),7));
+    P(:,m) = table2array(d3_m(M==mode(m),6));
+    U(:,m) = table2array(d3_m(M==mode(m),7));
     
 end
 
@@ -223,8 +223,8 @@ for i = 1:4
 end
 
 for m = 1:numel(mode)
-    P(:,m) = table2array(d1_m(M==mode(m),6));
-    U(:,m) = table2array(d1_m(M==mode(m),7));
+    P(:,m) = table2array(d8_m(M==mode(m),6));
+    U(:,m) = table2array(d8_m(M==mode(m),7));
     
 end
 
@@ -298,20 +298,22 @@ c=343;
 
 d_1 = 0.01;
 d_2 = 0.04; %[m]
-l2_corr = l2+1.7*d_2/2; %[m]
+l2_corr = l2+0.85*d_2/2; %[m]
 D2 = 0.1586; %[m]
 S1 = pi*(d_1/2)^2;
 S2 = pi*(d_2/2)^2; %[m^2]
 V1 = 4/3*pi*(D/2)^3;
 V2 = 4/3*pi*(D2/2)^3;
 
+
+l1_corr= l1+0.6*0.005;
 % f) simulink
 
 C_1 = V1/(rho*c^2); %[N/m^5] 
 C_2 = V2/(rho*c^2); %[N/m^5] 
 L_1 = (rho*l1_corr)/S1;
 L_2 = (rho*l2_corr)/S2;
-
+    
 
 
 Fs = 20000;
@@ -348,3 +350,29 @@ grid on
 
 % saveas(gcf,strcat("Plots/","Receptance",".png"));
 
+%%  test primo helmholtz
+l1_corr= l1+0.6*0.005;
+C_1 = V1/(rho*c^2); %[N/m^5] 
+C_2 = V2/(rho*c^2); %[N/m^5] 
+L_1 = (rho*l1_corr)/S1;
+L_2 = (rho*l2_corr)/S2;
+sim("helmoltz.slx");
+
+impH = squeeze(ans.impH.Data);
+currH = -squeeze(ans.currH.Data);
+f = [0:Fs/length(impH):Fs-1/length(impH)]';
+omega = 2*pi.*f;
+
+Z = fft(impH)./(fft(currH));
+
+% plot
+figure('Renderer', 'painters', 'Position', [10 10 1000 600]);
+% subplot 211;
+semilogx(f,db(abs(Z)),'b-',LineWidth=2);
+xlabel('Frequency ','interpreter','latex', FontSize=axlabelsize);
+ylabel('$|Z| [Ns/m^5]$','interpreter','latex', FontSize=axlabelsize);
+xlim([10 Fs/2+1]);
+%ylim([0 100]);
+% legend('','Fontsize',16,'interpreter','latex');
+title('Impedence magnitude','interpreter','latex', FontSize=titlesize);
+grid on
