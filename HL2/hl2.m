@@ -313,9 +313,8 @@ C_1 = V1/(rho*c^2); %[N/m^5]
 C_2 = V2/(rho*c^2); %[N/m^5] 
 L_1 = (rho*l1_corr)/S1;
 L_2 = (rho*l2_corr)/S2;
-    
 
-
+%simulation
 Fs = 20000;
 Res = 1000;
 sim("doppio_helmoltz.slx");
@@ -327,28 +326,18 @@ omega = 2*pi.*f;
 
 Z = fft(impulse)./(fft(current));
 
-% plot
+%% plot
 figure('Renderer', 'painters', 'Position', [10 10 1000 600]);
 % subplot 211;
 semilogx(f,db(abs(Z)),'b-',LineWidth=2);
-xlabel('Frequency ','interpreter','latex', FontSize=axlabelsize);
+xlabel('Frequency [Hz]','interpreter','latex', FontSize=axlabelsize);
 ylabel('$|Z| [Ns/m^5]$','interpreter','latex', FontSize=axlabelsize);
 xlim([10 Fs/2+1]);
 %ylim([0 100]);
 % legend('','Fontsize',16,'interpreter','latex');
-title('Impedence magnitude','interpreter','latex', FontSize=titlesize);
+title('Double Helmoltz resonator electrical equivalence simulation','interpreter','latex', FontSize=titlesize);
 grid on
-% subplot 212;
-% semilogx(f,angle(Z),'b-',LineWidth=2);
-% xlabel('Frequency ','interpreter','latex', FontSize=axlabelsize);
-% ylabel('$\angle{Z}$ [rad]','interpreter','latex', FontSize=axlabelsize);
-% xlim([1 Fs/2+1]);
-% % legend('','Fontsize',16,'interpreter','latex');
-% title('Impedence phase','interpreter','latex', FontSize=titlesize);
-% grid on 
-% sgtitle('Bridge impedence', FontSize=titlesize, Interpreter='Latex');
 
-% saveas(gcf,strcat("Plots/","Receptance",".png"));
 
 %%  test primo helmholtz
 l1_corr= l1+0.6*0.005;
@@ -369,10 +358,21 @@ Z = fft(impH)./(fft(currH));
 figure('Renderer', 'painters', 'Position', [10 10 1000 600]);
 % subplot 211;
 semilogx(f,db(abs(Z)),'b-',LineWidth=2);
-xlabel('Frequency ','interpreter','latex', FontSize=axlabelsize);
+xlabel('Frequency [Hz]','interpreter','latex', FontSize=axlabelsize);
 ylabel('$|Z| [Ns/m^5]$','interpreter','latex', FontSize=axlabelsize);
 xlim([10 Fs/2+1]);
 %ylim([0 100]);
 % legend('','Fontsize',16,'interpreter','latex');
-title('Impedence magnitude','interpreter','latex', FontSize=titlesize);
+title('Double Helmoltz resonator electrical equivalence simulation','interpreter','latex', FontSize=titlesize);
 grid on
+% subplot 212;
+% semilogx(f,angle(Z),'b-',LineWidth=2);
+% xlabel('Frequency ','interpreter','latex', FontSize=axlabelsize);
+% ylabel('$\angle{Z}$ [rad]','interpreter','latex', FontSize=axlabelsize);
+% xlim([1 Fs/2+1]);
+% % legend('','Fontsize',16,'interpreter','latex');
+% title('Impedence phase','interpreter','latex', FontSize=titlesize);
+% grid on 
+% sgtitle('Bridge impedence', FontSize=titlesize, Interpreter='Latex');
+% saveas(gcf,strcat("Plots/","Receptance",".png"));
+
