@@ -65,8 +65,8 @@ plot(freq,db(abs(P_d1./U_d1)),'b-',LineWidth=1);
 xlabel('Frequency [Hz]','interpreter','latex', FontSize=axlabelsize);
 ylabel('$|Z| [Ns/m^5]$','interpreter','latex', FontSize=axlabelsize);
 xlim([50,550])
-% legend('','Fontsize',16,'interpreter','latex');
-title('Impedance magnitude','interpreter','latex', FontSize=legendsize);
+% % legend('','Fontsize',16,'interpreter','latex');
+% title('Impedance magnitude','interpreter','latex', FontSize=legendsize);
 grid on
 sgtitle('$d_1 = 0.04 [m]$', FontSize=titlesize, Interpreter='Latex');
 
@@ -274,7 +274,7 @@ saveas(gcf,strcat("Plots/","mode_sum_d8",".png"));
 M = table2array(double_hel(:,1));
 mode = unique(table2array(double_hel(:,1)));
 freq = unique(table2array(double_hel(:,2)));
-
+    
 for i = 1:4
         P_2hel(:,i)=table2array(double_hel(M==mode(i),3));
         U_2hel(:,i)=table2array(double_hel(M==mode(i),4));
@@ -291,9 +291,11 @@ for i = 1:4
         title(strcat('m=',num2str(i-1)),'interpreter','latex', FontSize=titlesize);
         sgtitle('Coupled resonators ', FontSize=titlesize, Interpreter='Latex');
         grid on
-        % saveas(gcf,strcat("Plots/","",".png"));
+        % 
        
 end
+
+% saveas(gcf,strcat("Plots/","modal_double",".png"));
 
 for m = 1:numel(mode)
     P(:,m) = table2array(double_hel(M==mode(m),3));
@@ -312,9 +314,9 @@ fig12.Position = [10 10 1500 900];
 plot(freq,db(sum_double),'b-',LineWidth=1);
 xlabel('Frequency [Hz]','interpreter','latex', FontSize=axlabelsize);
 ylabel('$|Z| [Ns/m^5]$','interpreter','latex', FontSize=axlabelsize);
-sgtitle('Coupled resonators, All modes', FontSize=titlesize, Interpreter='Latex');
+sgtitle('Summation of modes for the coupled resonators system', FontSize=titlesize, Interpreter='Latex');
 grid on
-% saveas(gcf,strcat("Plots/","",".png"));
+saveas(gcf,strcat("Plots/","mode_sum_double",".png"));
 
 %% f) simulink
 
@@ -322,9 +324,9 @@ grid on
 rho=1.204;
 c=343;
 
-d_1 = 0.04;
+d_1 = 0.01;
 d_2 = 0.04; %[m]
-l2_corr = l2+1.7*d_2/2; %[m]
+l2_corr = l2+1.86*d_2/2; %[m]
 D2 = 0.1586; %[m]
 S1 = pi*(d_1/2)^2;
 S2 = pi*(d_2/2)^2; %[m^2]
@@ -342,7 +344,7 @@ L_2 = (rho*l2_corr)/S2;
 
 %simulation
 Fs = 20000;
-Res = 0.01;
+Res = 1E-7;
 sim("doppio_helmoltz.slx");
 
 impulse = squeeze(ans.impulse.Data);
@@ -373,7 +375,7 @@ grid on
 % grid on 
 % sgtitle('Bridge Impedance', FontSize=titlesize, Interpreter='Latex');
 
-% saveas(gcf,strcat("Plots/","Receptance",".png"));
+ saveas(gcf,strcat("Plots/","sim2res",".png"));
 
 %%  test primo helmholtz
 % l1_corr= l1+0.6*0.005;
