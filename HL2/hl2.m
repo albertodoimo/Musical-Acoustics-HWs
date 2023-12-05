@@ -6,6 +6,7 @@ if not(isfolder("Plots"))
     mkdir("Plots")
 end
 addpath('Plots')
+
 %%
 axlabelsize = 16;
 titlesize = 22;
@@ -21,7 +22,7 @@ l1_corr = l1+0.93*d_1/2; %[m]
 c = 343; %[m/s]
 f1 = 300; %[Hz]
 
-%% import
+%% Import COMSOL DATA
 
 d1 = readtable('Csv/d1.csv');
 d1sweep = readtable('Csv/d1sweep.csv');
@@ -65,15 +66,13 @@ plot(freq,db(abs(P_d1./U_d1)),'b-',LineWidth=1);
 xlabel('Frequency [Hz]','interpreter','latex', FontSize=axlabelsize);
 ylabel('$|Z| [Ns/m^5]$','interpreter','latex', FontSize=axlabelsize);
 xlim([50,550])
-% % legend('','Fontsize',16,'interpreter','latex');
-% title('Impedance magnitude','interpreter','latex', FontSize=legendsize);
+% legend('','Fontsize',16,'interpreter','latex');
 grid on
 sgtitle('$d_1 = 0.04 [m]$', FontSize=titlesize, Interpreter='Latex');
 
-saveas(gcf,strcat("Plots/","d1_imp_plot",".png"));
+% saveas(gcf,strcat("Plots/","d1_imp_plot",".png"));
 
 %% c) d1 sweep
-
 
 ii = table2array(d1sweep(:,1));
 d = unique(table2array(d1sweep(:,1)));
@@ -106,24 +105,11 @@ for i = 1:3
         ylabel('$|Z| [Ns/m^5]$','interpreter','latex', FontSize=axlabelsize);
         xlim([60,540])
         ylim([80,140])
-%         title(strcat('d=',num2str(d(i)),'[m]'),'interpreter','latex', FontSize=titlesize);
         grid minor
 
-
-%         fig4 = figure(4);
-%         fig4.Position = [10 10 1500 900];
-%         hold on
-%         subplot(3,1,i);
-%         plot(freq,angle(P_d1sweep(:,i)./U_d1sweep(:,i)),'b-',LineWidth=1);
-%         xlabel('Frequency [Hz]','interpreter','latex', FontSize=axlabelsize);
-%         ylabel('$\angle{Z}$ [rad]','interpreter','latex', FontSize=axlabelsize);
-%         title(strcat('d=',num2str(d(i)),'[m]'),'interpreter','latex', FontSize=titlesize);
-%         grid on
-%         sgtitle('d1 sweep phase', FontSize=titlesize, Interpreter='Latex');
-%         % saveas(gcf,strcat("Plots/","",".png"));
 end
 
-        saveas(gcf,strcat("Plots/","d1_sweep_plot",".png"));
+        % saveas(gcf,strcat("Plots/","d1_sweep_plot",".png"));
 
 %% d) d1 modes
 
@@ -137,10 +123,10 @@ for i = 1:4
 
         % plot
         fig5 = figure(5);
-        fig5.Position = [10 10 1500 900];
+        fig5.Position = [10 10 1500 300];
        
         hold on
-        subplot(2,2,i);
+        subplot(1,4,i);
         plot(freq,db(abs(P_d1_m(:,i)./U_d1_m(:,i))),'b-',LineWidth=1);
         xlabel('Frequency [Hz]','interpreter','latex', FontSize=axlabelsize);
         ylabel('$|Z| [Ns/m^5]$','interpreter','latex', FontSize=axlabelsize);
@@ -150,8 +136,9 @@ for i = 1:4
         grid on
        
 end
-         saveas(gcf,strcat("Plots/","modal_d1",".png"));
+         % saveas(gcf,strcat("Plots/","modal_d1",".png"));
 %%
+
 for m = 1:numel(mode)
     P(:,m) = table2array(d1_m(M==mode(m),6));
     U(:,m) = table2array(d1_m(M==mode(m),7));
@@ -171,7 +158,8 @@ xlabel('Frequency [Hz]','interpreter','latex', FontSize=axlabelsize);
 ylabel('$|Z| [Ns/m^5]$','interpreter','latex', FontSize=axlabelsize);
 sgtitle('Summation of modes for $d_1 = 0.01 [m]$', FontSize=titlesize, Interpreter='Latex');
 grid on
-saveas(gcf,strcat("Plots/","mode_sum_d1",".png"));
+
+% saveas(gcf,strcat("Plots/","mode_sum_d1",".png"));
 
 %% d) d3 modes
 
@@ -185,10 +173,10 @@ for i = 1:4
 
         % plot
         fig7 = figure(7);
-        fig7.Position = [10 10 1500 900];
+        fig7.Position = [10 10 1500 300];
        
         hold on
-        subplot(2,2,i);
+        subplot(1,4,i);
         plot(freq,db(abs(P_d3_m(:,i)./U_d3_m(:,i))),'b-',LineWidth=1);
         xlabel('Frequency [Hz]','interpreter','latex', FontSize=axlabelsize);
         ylabel('$|Z| [Ns/m^5]$','interpreter','latex', FontSize=axlabelsize);
@@ -198,7 +186,8 @@ for i = 1:4
         % 
        
 end
-saveas(gcf,strcat("Plots/","modal_d3",".png"));
+
+% saveas(gcf,strcat("Plots/","modal_d3",".png"));
 %%
 for m = 1:numel(mode)
     P(:,m) = table2array(d3_m(M==mode(m),6));
@@ -219,7 +208,8 @@ xlabel('Frequency [Hz]','interpreter','latex', FontSize=axlabelsize);
 ylabel('$|Z| [Ns/m^5]$','interpreter','latex', FontSize=axlabelsize);
 sgtitle('Summation of modes for $d_1 = 0.03 [m]$', FontSize=titlesize, Interpreter='Latex');
 grid on
-saveas(gcf,strcat("Plots/","mode_sum_d3",".png"));
+
+% saveas(gcf,strcat("Plots/","mode_sum_d3",".png"));
 
 %% d) d8 modes
 
@@ -233,10 +223,10 @@ for i = 1:4
 
         % plot
         fig9 = figure(9);
-        fig9.Position = [10 10 1500 900];
+        fig9.Position = [10 10 1500 300];
        
         hold on
-        subplot(2,2,i);
+        subplot(1,4,i);
         plot(freq,db(abs(P_d8_m(:,i)./U_d8_m(:,i))),'b-',LineWidth=1);
         xlabel('Frequency [Hz]','interpreter','latex', FontSize=axlabelsize);
         ylabel('$|Z| [Ns/m^5]$','interpreter','latex', FontSize=axlabelsize);
@@ -248,6 +238,7 @@ for i = 1:4
 end
 saveas(gcf,strcat("Plots/","modal_d8",".png"));
 %%
+
 for m = 1:numel(mode)
     P(:,m) = table2array(d8_m(M==mode(m),6));
     U(:,m) = table2array(d8_m(M==mode(m),7));
@@ -267,7 +258,8 @@ xlabel('Frequency [Hz]','interpreter','latex', FontSize=axlabelsize);
 ylabel('$|Z| [Ns/m^5]$','interpreter','latex', FontSize=axlabelsize);
 sgtitle('Summation of modes for $d_1 = 0.08 [m]$', FontSize=titlesize, Interpreter='Latex');
 grid on
-saveas(gcf,strcat("Plots/","mode_sum_d8",".png"));
+
+% saveas(gcf,strcat("Plots/","mode_sum_d8",".png"));
 
 %% e) Double helmoltz
 
@@ -281,10 +273,10 @@ for i = 1:4
 
         % plot
         fig11 = figure(11);
-        fig11.Position = [10 10 1500 900];
+        fig11.Position = [10 10 1500 300];
        
         hold on
-        subplot(2,2,i);
+        subplot(1,4,i);
         plot(freq,db(abs(P_2hel(:,i)./U_2hel(:,i))),'b-',LineWidth=1);
         xlabel('Frequency [Hz]','interpreter','latex', FontSize=axlabelsize);
         ylabel('$|Z| [Ns/m^5]$','interpreter','latex', FontSize=axlabelsize);
@@ -316,7 +308,8 @@ xlabel('Frequency [Hz]','interpreter','latex', FontSize=axlabelsize);
 ylabel('$|Z| [Ns/m^5]$','interpreter','latex', FontSize=axlabelsize);
 sgtitle('Summation of modes for the coupled resonators system', FontSize=titlesize, Interpreter='Latex');
 grid on
-saveas(gcf,strcat("Plots/","mode_sum_double",".png"));
+
+% saveas(gcf,strcat("Plots/","mode_sum_double",".png"));
 
 %% f) simulink
 
@@ -333,16 +326,16 @@ S2 = pi*(d_2/2)^2; %[m^2]
 V1 = 4/3*pi*(D/2)^3;
 V2 = 4/3*pi*(D2/2)^3;
 
-
 l1_corr= l1+(0.93*(d_1/2));
-% f) simulink
+
 
 C_1 = V1/(rho*c^2); %[N/m^5] 
 C_2 = V2/(rho*c^2); %[N/m^5] 
 L_1 = (rho*l1_corr)/S1;
 L_2 = (rho*l2_corr)/S2;
 
-%simulation
+% simulation
+
 Fs = 20000;
 Res = 1E-7;
 sim("doppio_helmoltz.slx");
@@ -362,55 +355,9 @@ xlabel('Frequency [Hz]','interpreter','latex', FontSize=axlabelsize);
 ylabel('$|Z| [Ns/m^5]$','interpreter','latex', FontSize=axlabelsize);
 xlim([10 Fs/2+1]);
 %ylim([0 100]);
-% legend('','Fontsize',16,'interpreter','latex');
 title('Impedance magnitude','interpreter','latex', FontSize=titlesize);
 grid on
-% subplot 212;
-% semilogx(f,angle(Z),'b-',LineWidth=2);
-% xlabel('Frequency ','interpreter','latex', FontSize=axlabelsize);
-% ylabel('$\angle{Z}$ [rad]','interpreter','latex', FontSize=axlabelsize);
-% xlim([1 Fs/2+1]);
-% % legend('','Fontsize',16,'interpreter','latex');
-% title('Impedance phase','interpreter','latex', FontSize=titlesize);
-% grid on 
-% sgtitle('Bridge Impedance', FontSize=titlesize, Interpreter='Latex');
 
- saveas(gcf,strcat("Plots/","sim2res",".png"));
+% saveas(gcf,strcat("Plots/","sim2res",".png"));
 
-%%  test primo helmholtz
-% l1_corr= l1+0.6*0.005;
-C_1 = V1/(rho*c^2); %[N/m^5] 
-C_2 = V2/(rho*c^2); %[N/m^5] 
-L_1 = (rho*l1_corr)/S1;
-L_2 = (rho*l2_corr)/S2;
-sim("helmoltz.slx");
-
-impH = squeeze(ans.impH.Data);
-currH = -squeeze(ans.currH.Data);
-f = [0:Fs/length(impH):Fs-1/length(impH)]';
-omega = 2*pi.*f;
-
-Z = fft(impH)./(fft(currH));
-
-% plot
-figure('Renderer', 'painters', 'Position', [10 10 1500 900]);
-% subplot 211;
-semilogx(f,db(abs(Z)),'b-',LineWidth=2);
-xlabel('Frequency [Hz]','interpreter','latex', FontSize=axlabelsize);
-ylabel('$|Z| [Ns/m^5]$','interpreter','latex', FontSize=axlabelsize);
-xlim([10 Fs/2+1]);
-%ylim([0 100]);
-% legend('','Fontsize',16,'interpreter','latex');
-title('Impedance magnitude','interpreter','latex', FontSize=titlesize);
-grid on
-% subplot 212;
-% semilogx(f,angle(Z),'b-',LineWidth=2);
-% xlabel('Frequency ','interpreter','latex', FontSize=axlabelsize);
-% ylabel('$\angle{Z}$ [rad]','interpreter','latex', FontSize=axlabelsize);
-% xlim([1 Fs/2+1]);
-% % legend('','Fontsize',16,'interpreter','latex');
-% title('Impedence phase','interpreter','latex', FontSize=titlesize);
-% grid on 
-% sgtitle('Bridge impedence', FontSize=titlesize, Interpreter='Latex');
-% saveas(gcf,strcat("Plots/","Receptance",".png"));
 
