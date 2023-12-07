@@ -35,12 +35,11 @@ C_v = V/(rho*c^2); %[N/m^5]
 
 Fs = 44100;
 %% Simulink 
-
-out = sim('bridge_impedance.slx');
+mult=5;
+out = sim('bridge_impedance.slx',mult);
 %out = sim('HW_3.slx');
 
 %% 1) Impedance
-
 
 impulse = squeeze(out.impulse.Data);
 current = squeeze(out.current.Data);
@@ -83,13 +82,14 @@ Z_bridge = Z./max(abs(Z));
 T = 1/Fs;
 zeta=exp(1i*omega*T);
 f_guitar=[82.41,110,146.83,196,246.94,329.63];
-N_s=floor(Fs./f_guitar);
+N_s=floor(Fs./f_guitar/2);
  
 %%
 g=5;
 beta=1/g;
 H_EB=zeros(6,length(f));
 center=floor(length(H_EB)/2);
+Hz500=500*mult;
 % 1:length(f_guitar)
 for i=1:length(f_guitar)
 
@@ -124,14 +124,14 @@ for i=1:length(f_guitar)
 end
 figure(1)
     subplot 211
-    plot(db(abs(H_EB(1,center:center+500))))
+    plot(db(abs(H_EB(1,center:center+Hz500))))
 %     xlim([0 500])
     hold on 
-     plot(db(abs(H_EB(1,1:500))))
+     plot(db(abs(H_EB(1,1:Hz500))))
     grid on
     subplot 212
     plot(angle(H_EB(1,:)))
-    xlim([0 500])
+    xlim([0 Hz500])
     hold on 
     grid on
 
@@ -139,7 +139,7 @@ figure(1)
 % Fs=1000;
 d0=0.003;
 L=0.645;
-t_out=1;
+t_out=mult;
 x=linspace(0,L,length(f));
 input=zeros(size(x));
 input(1)=1;
@@ -150,7 +150,7 @@ input(1)=1;
 % y(x<=beta*L)=d0/beta/L*x(x<=beta*L);
 % y(x>beta*L)=d0/(1-beta)-d0/(1-beta)./L*x(x>beta*L);
 X=fft(input);
-F=H_EB(1,center:center+1000).*X(2:1002)*0.003;
+F=H_EB(1,center:center+Hz500*2).*X(2:Hz500*2+2)*0.003;
 time_resp=ifft(F,Fs*t_out); 
 t = linspace(0,Fs*t_out,length(time_resp))/Fs;
 figure(10)
