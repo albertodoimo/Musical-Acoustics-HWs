@@ -42,7 +42,7 @@ Fs = 44100; % Sampling frequency
 
 %% Simulink 
 
-tt=20; 
+tt=4; 
 out = sim('bridge_impedance.slx', tt);
 
 %% 1) Bridge impedance
@@ -95,7 +95,6 @@ g=5; % plucking position
 beta=1/g; 
 H_EB=zeros(6,length(f));
 center=floor(length(H_EB)/2);
-center=1;
 Hz500=500*tt;
 
 for i=1:length(f_guitar)
@@ -157,13 +156,14 @@ input(1)=1;
 X=fft(input);
 for ii=1:length(f_guitar)
 
-    % output force (freq domain)
+    % input force (freq domain)
     F=H_EB(ii,center:center+Hz500*2).*X(2:Hz500*2+2)*d0;
     
     % time response
     time_resp=ifft(F,Fs*tt); 
     t = linspace(0,Fs*tt,length(time_resp))/Fs; %[s]
     output=real(time_resp)./max(abs(real(time_resp)));
+
     % plot
     fig3 = figure(3);
     fig3.Position = [10 10 1500 900];
@@ -171,7 +171,7 @@ for ii=1:length(f_guitar)
     plot(t, output,'b-',LineWidth=0.5);
     xlabel('sec','interpreter','latex', FontSize=axlabelsize);
     % ylabel('','interpreter','latex', FontSize=axlabelsize);
-    % xlim([0 3-2/5*(ii-1)]);
+    xlim([0 3-2/5*(ii-1)]);
     % legend('','Fontsize',16,'interpreter','latex');
     title(strcat(guitar_names(ii,:),'=',num2str(f_guitar(ii)),'$[Hz]$'),'interpreter','latex', FontSize=titlesize);
     grid on
@@ -179,8 +179,8 @@ for ii=1:length(f_guitar)
     
     % audio save
 
-    audio = strcat(strcat(guitar_names(ii,:)),".wav");
+    string1 = strcat(strcat(guitar_names(ii,:)),".wav");
 
-    audiowrite('.\audioOutputs\'+ audio,output,Fs);
-    
+    audiowrite('.\audioOutputs\'+ string,output,Fs);
+
 end
