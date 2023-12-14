@@ -60,12 +60,12 @@ Z = fft(impulse)./(fft(current));
 figure('Renderer', 'painters', 'Position', [10 10 1000 600]);
 subplot 211;
 plot(f,db(abs(Z)),'b-',LineWidth=2);
-xlabel('Frequency ','interpreter','latex', FontSize=axlabelsize);
+xlabel('Frequency [Hz]','interpreter','latex', FontSize=axlabelsize);
 ylabel('$|Z| \ [Ns/m^5]$','interpreter','latex', FontSize=axlabelsize);
 xlim([0 500]);
 %ylim([0 100]);
 % legend('','Fontsize',16,'interpreter','latex');
-title('Impedence magnitude','interpreter','latex', FontSize=titlesize);
+title('Impedance magnitude','interpreter','latex', FontSize=titlesize);
 grid on
 subplot 212;
 plot(f,angle(Z),'b-',LineWidth=2);
@@ -73,9 +73,9 @@ xlabel('Frequency [Hz]','interpreter','latex', FontSize=axlabelsize);
 ylabel('$\angle{Z} \ [rad]$','interpreter','latex', FontSize=axlabelsize);
 xlim([0 500]);
 % legend('','Fontsize',16,'interpreter','latex');
-title('Impedence phase','interpreter','latex', FontSize=titlesize);
+title('Impedance phase','interpreter','latex', FontSize=titlesize);
 grid on 
-sgtitle('Bridge impedence', FontSize=titlesize, Interpreter='Latex');
+sgtitle('Bridge impedance', FontSize=titlesize, Interpreter='Latex');
 
 % saveas(gcf,strcat("Plots/","Receptance",".png"));
 
