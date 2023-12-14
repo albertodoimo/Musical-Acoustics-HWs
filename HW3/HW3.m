@@ -35,18 +35,20 @@ C_v = V/(rho*c^2); %[N/m^5]
 
 %% Simulink 
 
+Fs = 441000;
+
 tt=5; 
 out = sim('bridge_impedance.slx', tt);
 
 %% 1) Impedance
 
-Fs = 1000;
+
 impulse = squeeze(out.impulse.Data);
 current = -squeeze(out.current.Data);
 f = [0:Fs/length(impulse):Fs-1/length(impulse)]';
 omega = 2*pi.*f;
 
-Z = fft(current)./(fft(impulse)); 
+Z = fft(impulse)./(fft(current)); 
 
 % plot
 figure('Renderer', 'painters', 'Position', [10 10 1000 600]);
@@ -73,8 +75,9 @@ sgtitle('Bridge impedence', FontSize=titlesize, Interpreter='Latex');
 
 %% 2) Derive the filter H_EB
 
-%Z_bridge = Z./max(abs(Z));
-Z_bridge = Z;
+Z_bridge = Z./max(abs(Z));
+% Z_bridge = Z;
+
 T = 1/Fs;
 zeta=exp(1i*omega*T);
 f_guitar=[82.41,110,146.83,196,246.94,329.63]; %[Hz]
@@ -95,7 +98,7 @@ for i=1:length(f_guitar)
     N_nut=floor(beta*N_s(i));
     N_bridge=N_s(i)-N_nut;
 
-    R_f=-0.99; % nut filter
+    R_f=-0.995; % nut filter
     R_b=-0.99; % bridge filter
 
     H_E1R1 = zeta.^(-N_bridge);
@@ -149,7 +152,7 @@ X=fft(input);
 for ii=1:length(f_guitar)
 
     % output force (freq domain)
-    F=H_EB(ii,center:Hz500*2+1).*X(1:Hz500*2+1)*d0;
+    F=H_EB(ii,center:Hz500*2+1).*X(1:Hz500*2+1);
     
     % time response
     time_resp=ifft(F,Fs*tt); 
@@ -158,7 +161,7 @@ for ii=1:length(f_guitar)
     % plot
     fig3 = figure(3);
     fig3.Position = [10 10 1500 900];
-    subplot (3,2,ii);
+    sb(ii) = subplot (3,2,ii);
     plot(t, output,'b-',LineWidth=0.5);
     xlabel('sec','interpreter','latex', FontSize=axlabelsize);
     % ylabel('','interpreter','latex', FontSize=axlabelsize);
@@ -174,5 +177,5 @@ for ii=1:length(f_guitar)
     audiowrite('.\audioOutputs\'+ audio,output,Fs);
     
 end
-
+linkaxes(sb,'x');
 % saveas(gcf,strcat("Plots/","H_EB",".png"));
