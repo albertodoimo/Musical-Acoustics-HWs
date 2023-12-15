@@ -42,7 +42,7 @@ Fs = 44100; % Sampling frequency
 
 %% Simulink 
 
-tt=20; 
+tt=1; 
 out = sim('bridge_impedance.slx', tt);
 
 %% 1) Bridge impedance
@@ -94,16 +94,16 @@ N_s=floor(Fs./f_guitar/2); % number of samples for every string
 g=5; % plucking position
 beta=1/g; 
 H_EB=zeros(6,length(f));
-center=floor(length(H_EB)/2);
+%center=floor(length(H_EB)/2);
 center=1;
-Hz500=500*tt;
+Hz500=22050*tt;
 
 for i=1:length(f_guitar)
 
     N_nut=floor(beta*N_s(i));
     N_bridge=N_s(i)-N_nut;
 
-    R_f=-0.99; % nut filter
+    R_f=-0.995; % nut filter
     R_b=-0.99; % bridge filter
 
     H_E1R1 = zeta.^(-N_bridge);
@@ -151,23 +151,23 @@ d0=0.003; %[m] max displacement
 L=0.645; %[m] string length
 
 % impulse
-x=linspace(0,L,length(f)); 
-input=zeros(size(x));
+input=zeros(1,Fs*tt+1);
 input(1)=1;
 X=fft(input);
 for ii=1:length(f_guitar)
 
     % output force (freq domain)
-    F=H_EB(ii,center:center+Hz500*2).*X(2:Hz500*2+2)*d0;
-    
+    %F=H_EB(ii,center:center+Hz500*2).*X(1:Hz500*2+1);
+    F=H_EB(ii,:).*X;
+
     % time response
-    time_resp=ifft(F,Fs*tt); 
+    time_resp=ifft(F(1:Hz500*2+1),Fs*tt); 
     t = linspace(0,Fs*tt,length(time_resp))/Fs; %[s]
     output=real(time_resp)./max(abs(real(time_resp)));
     % plot
     fig3 = figure(3);
     fig3.Position = [10 10 1500 900];
-    subplot (3,2,ii);
+    sub(ii)= subplot (3,2,ii);
     plot(t, output,'b-',LineWidth=0.5);
     xlabel('sec','interpreter','latex', FontSize=axlabelsize);
     % ylabel('','interpreter','latex', FontSize=axlabelsize);
@@ -184,3 +184,5 @@ for ii=1:length(f_guitar)
     audiowrite('.\audioOutputs\'+ audio,output,Fs);
     
 end
+
+linkaxes(sub,'x','y');
