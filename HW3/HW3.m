@@ -38,13 +38,13 @@ M_h = m_h/(A_h^2); %[Kg/m^4]
 C_p = (A_p^2)/K_p; %[N/m^5] top plate compliance
 C_v = V/(rho*c^2); %[N/m^5] 
 
-Fs = 44100; % Sampling frequency
+Fs = 44000; % Sampling frequency
+limit = 22000;
 
 %% Simulink 
 
-tt=1; 
+tt=5; 
 out = sim('bridge_impedance.slx', tt);
-
 %% 1) Bridge impedance
 
 impulse = squeeze(out.impulse.Data);
@@ -96,7 +96,10 @@ beta=1/g;
 H_EB=zeros(6,length(f));
 %center=floor(length(H_EB)/2);
 center=1;
-Hz500=22050*tt;
+Hz500=limit*tt;
+
+%%
+
 
 for i=1:length(f_guitar)
 
@@ -116,6 +119,8 @@ for i=1:length(f_guitar)
     H_loop = H_E2R1.*R_b.*H_R2E2;
 
     H_EB(i,:) = 0.5 .* (1+H_E2R1) .* (H_E1R1./(1-H_loop)) .* (Z_bridge./zeta) .* (1-R_b);
+
+
 
 % plot
 fig2 = figure(2);
@@ -145,38 +150,109 @@ sgtitle('Transfer function from excitation point to bridge', FontSize=titlesize,
 
 % saveas(gcf,strcat("Plots/","H_EB",".png"));
 end
+
+%% windowing 
+center_w=floor(length(H_EB)/2);
+w = zeros(length(f_guitar),Hz500*2+1);
+for ii=1:6
+    %w(ii,:) = hann(Hz500*2+1);
+    %w(ii,:) = zeros(Hz500*2+1,1);
+    %hannSize = 1001;
+    %wHann = hann(hannSize);
+    %w(ii,floor(size(w,1)/2)-ceil(size(wHann,1)/2):floor(size(w,1)/2)-ceil(size(wHann,1)/2)+size(wHann,1)-1) = wHann;
+    %wHann
+    w(ii,:) = hann(Hz500*2+1);
+    
+    H_EB_shift_no_W(ii,:)=fftshift(H_EB(ii,:));
+    H_EB_shift(ii,:) = H_EB_shift_no_W(ii,center_w-Hz500+1:center_w+Hz500+1).*w(ii,:);
+    %H_EB_shift(ii,:)=fftshift(H_EB(ii,center-Hz500+1:center+Hz500+1));
+
+    H_EB_reshift(ii,:)=fftshift(H_EB_shift(ii,floor(length(H_EB_shift(ii,:))/2)-Hz500+1:floor(length(H_EB_shift(ii,:))/2)+Hz500+1));
+
+
+    % figure(33);
+    % subplot (3,2,ii)
+    % plot(db(abs(H_EB(ii,:))));
+    % title('h_eb')
+    % hold on
+    % figure(34);
+    % subplot (3,2,ii)
+    % plot(db(abs(H_EB_shift(ii,:))));
+    % hold on
+    % title('h_eb_shift')
+    % figure(35);
+    % subplot (3,2,ii)
+    % plot(db(abs(H_EB_reshift(ii,:))));
+    % hold on
+    % title('h_eb_reshift')
+    
+end
+%H_EB_shift(1,:) = fftshift(H_EB(1,:));
+
+
 %% 3) time domain response
 
 d0=0.003; %[m] max displacement
 L=0.645; %[m] string length
 
-% impulse
-input=zeros(1,Fs*tt+1);
-input(1)=1;
-X=fft(input);
+[amp] = acc_amplitude(Fs,tt,L,beta,d0,0,f_guitar);
+
+%% expected force
+% 
+% kk=0.002;
+% time1 = 1/(2*g*f_guitar(1))+kk;
+% time2 = (2*g-1)/(2*g*f_guitar(1))+kk;
+% time1b = (2*g+1)/(2*g*f_guitar(1))+kk;
+% 
+% t_F=zeros(1,Fs*tt);
+% t_F(1,1:time1*Fs)=0.001;
+% t_F(1,(time1)*Fs+1:time2*Fs)=-0.001;
+% t_F(1,(time2)*Fs+1:time1b*Fs)=0.001;
+% figure()
+% plot(-t_F)
+%%
+
+input=zeros(length(f_guitar),Hz500*2+1);
+%xx = linspace(0,Fs*tt,Fs*tt+1)/Fs;
+%X(1,:)=20*exp(-xx);
 for ii=1:length(f_guitar)
+    
+    % impulse
+    input(ii,1)=amp(ii);
+    %input(ii,1)=1;
+    X(ii,:)=fft(input(ii,:));
 
     % output force (freq domain)
-    %F=H_EB(ii,center:center+Hz500*2).*X(1:Hz500*2+1);
-    F=H_EB(ii,:).*X;
+    % F=H_EB(ii,center:center+Hz500*2).*X(1:Hz500*2+1);
+    F=H_EB_reshift(ii,:).*X(ii,:);
 
     % time response
     time_resp=ifft(F(1:Hz500*2+1),Fs*tt); 
     t = linspace(0,Fs*tt,length(time_resp))/Fs; %[s]
-    output=real(time_resp)./max(abs(real(time_resp)));
+    output=real(time_resp);
+    % output=real(time_resp)./max(abs(real(time_resp)));
     % plot
     fig3 = figure(3);
     fig3.Position = [10 10 1500 900];
-    sub(ii)= subplot (3,2,ii);
-    plot(t, output,'b-',LineWidth=0.5);
-    xlabel('sec','interpreter','latex', FontSize=axlabelsize);
-    % ylabel('','interpreter','latex', FontSize=axlabelsize);
-    % xlim([0 3-2/5*(ii-1)]);
-    % legend('','Fontsize',16,'interpreter','latex');
+    sub(ii)= subplot (3,4,ii*2-1);
+    plot(t,output,'b-',LineWidth=0.5);
+    xlim([0 5]);
+    ylim([-0.25 0.25]);
+    ylabel('F [N]','interpreter','latex', FontSize=axlabelsize);
+    xlabel('Time [s]','interpreter','latex', FontSize=axlabelsize);
     title(strcat(guitar_names(ii,:),'=',num2str(f_guitar(ii)),'$[Hz]$'),'interpreter','latex', FontSize=titlesize);
-    grid on
-    sgtitle('Time domain response', FontSize=titlesize, Interpreter='Latex');    
-    
+    grid on;
+    subplot (3,4,ii*2);
+    plot(t,output,'b-',LineWidth=0.5);
+    % hold on 
+    % plot(t,-t_F,'r',LineWidth = 2);
+    ylabel('F [N]','interpreter','latex', FontSize=axlabelsize);
+    xlabel('Time [s]','interpreter','latex', FontSize=axlabelsize);
+    xlim([0 1/10/tt]);
+    title(strcat(guitar_names(ii,:),'=',num2str(f_guitar(ii)),'$[Hz]$'),'interpreter','latex', FontSize=titlesize);
+    grid on;
+%   sgtitle('Time domain response', FontSize=titlesize, Interpreter='Latex');
+
     % audio save
 
     audio = strcat(strcat(guitar_names(ii,:)),".wav");
@@ -186,3 +262,16 @@ for ii=1:length(f_guitar)
 end
 
 linkaxes(sub,'x','y');
+
+% %% tension 
+% 
+% %beta = 1/3;
+% delta_L_max_t = ((d0^2)/(2*L))*(1/(beta*(1-beta)));
+% 
+% 
+% delta_L_max_t_5 = (3.13*d0^2)/L;
+% E=5E9;
+% A=0.36;
+% T0=82;
+% F_t = (T0+E*A/L * delta_L_max_t)*sin(d0/beta*L);
+
