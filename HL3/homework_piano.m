@@ -40,8 +40,8 @@ dur = 8;                        % [s]    Overall signal duration
 N = dur*Fs;                     % [ ]    Number of samples
 
 % Boundary          
-z_l = 1e+20;                    % [Ω/Kg*m−2*s−1] Left end normalized impedance
-z_b = 1000;                     % [Ω/Kg*m−2*s−1] Bridge normalized impedance
+z_l = 1e+20;                    % [Ω*m^2*s*Kg^-1] Left end normalized impedance
+z_b = 1000;                     % [Ω*m^2*s*Kg^-1] Bridge normalized impedance
 
 % String parameters
 f_1 = 65.4;                     % [Hz]   Fundamental note
@@ -253,6 +253,32 @@ for i = 1:(40*dur)
       end
 end
 
+%% Saving some samples of the string movement for report 
+
+upper = 8;
+lower = 0.001;
+numOfPics = 4;
+picTime= logspace(1,3,numOfPics);
+picTime_01 = picTime/max(picTime) - min(picTime)/max(picTime)
+picTime_08 = picTime_01*(upper-lower) + lower
+
+
+for i = 1:(numOfPics)
+    figure('Renderer', 'painters', 'Position', [10 10 700 300])
+    picTime_08Samp = round(picTime_08*Fs); 
+    grid minor;
+    plot(x,y(picTime_08Samp(i),:),'b-',LineWidth=2);
+    ylim([-0.0005 0.0005])
+    ylabel("String displacement [m]",'interpreter','latex', FontSize=axlabelsize);
+    xlabel("String extension [m]",'interpreter','latex', FontSize=axlabelsize);
+    grid on;
+    title(strcat('$t = $',num2str(picTime_08(i))),'interpreter','latex','FontSize',25) 
+    picName = strcat("./plots/PianoStringDispTime_",num2str(M),"_",num2str(i),".png");
+    delete(picName);
+    saveas(gcf, picName);
+end
+
+
 %% FFT of the averaged signal
 
 f=linspace(0,Fs,N);
@@ -265,9 +291,10 @@ xlim([0,1200]);
 xline(65.4,'g--', 'LineWidth',1.5);
 xline(65.4*9,'r', 'LineWidth',1.5);
 xline(65.4*18,'r', 'LineWidth',1.5);
-ylabel("disp [m]",'interpreter','latex', FontSize=titlesize);
-xlabel("Freqs [Hz]",'interpreter','latex', FontSize=titlesize);
-title('Frequency Representation of the signal','interpreter','latex', FontSize=titlesize);
+ylabel("Displacement [m]",'interpreter','latex', FontSize=titlesize);
+xlabel("Frequency [Hz]",'interpreter','latex', FontSize=titlesize);
+%title('Frequency Representation of the signal','interpreter','latex', FontSize=titlesize);
+grid on
 delete("./plots/FRFDisplacement.png");
 saveas(gcf, "./plots/FRFDisplacement.png");
 
@@ -296,4 +323,4 @@ sound(av_y_save,Fs)
 filenameAlberto = '.\audioOutputs\10865196_Doimo_piano.wav';
 %filenameRiccardo = ".\audioOutputs\10868500_Iaccarino_piano.wav";
 audiowrite(filenameAlberto,av_y_save,Fs);
-audiowrite(filenameRiccardo,av_y_save,Fs);
+%audiowrite(filenameRiccardo,av_y_save,Fs);
