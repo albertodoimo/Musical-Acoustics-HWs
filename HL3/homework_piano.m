@@ -232,7 +232,7 @@ for i = 1:(80*dur)
 end
 
 %% GIF creation
-
+close all
 figure('Renderer', 'painters', 'Position', [10 10 1000 500])
 filename = strcat("./plots/PianoStringGif_spatial_samples_",num2str(M),".gif");
 for i = 1:(40*dur) 
@@ -252,7 +252,6 @@ for i = 1:(40*dur)
           imwrite(imind,cm,filename,'gif','WriteMode','append','DelayTime',0.05);
       end
 end
-
 %% Saving some samples of the string movement for report 
 
 upper = 8;
