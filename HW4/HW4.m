@@ -6,7 +6,7 @@ if not(isfolder("plots"))
     mkdir("plots")
 end
 
-L = 0.47;
+L = 0.45;
 alpha = deg2rad(0.75); % rad
 c = 343; % m/s
 rho = 1.225; % kg/m3
@@ -26,12 +26,12 @@ Delta = rout0*0.85;
 Delta_6 = rout0*0.6;
 %Lp = L+Delta_6;
 Lp = L+Delta;
-theta_in = atan(k0*x_in);
+theta_out = atan(k0*x_out);
 %theta1 = atan(k0*x1);
 
 M = 0.04*rho./S_in;
 
-Zin = 1i*rho*c./S_in .* sin(k0*Lp) .* sin(theta_in) ./ sin(k0*Lp+theta_in) + 1i*w0*M;
+Zin = 1i*rho*c./S_in .* sin(k0*Lp) .* sin(theta_out) ./ sin(k0*Lp+theta_out) + 1i*w0*M;
 Zindb = db(Zin);
 
 % figure()
@@ -219,18 +219,19 @@ ylim([-0.2 0.2])
 
 %% punto 4 
 
-f = linspace(0,1000,1000);
+f = linspace(0,1000,10000);
 w = 2*pi*f;
 k = w./c;
-ZL=0;
+%ZL = (rho*c/S_out)*1/2*((k.*r_out).^2+1i*8/(3*pi)*k.*r_out);%Chaigne(12.126)
 t = Delta;
+%t = Delta/4;
 
 % hole 1 and 2 are inverted wrt before 
 D_2=D1;
 D_1=D2;
 
 config1 = 'closed';
-config2 = 'open';
+config2 = 'closed';
 
 % HOLE 1
 a_1 = (x_out+D_1)*tan(alpha);
@@ -284,8 +285,8 @@ thetaB = atan(k.*x_B);
 thetaC = atan(k.*x_C);
 thetaD = atan(k.*x_D);
 
-
 Z_c3 = 1i*rho*c/S_D * sin(k*(x_C-x_D)).*sin(thetaD) ./ sin(k*(x_C-x_D)+thetaD);
+%Z_c3 = parallel(1i*rho*c/S_D * sin(k*(x_C-x_D)).*sin(thetaD) ./ sin(k*(x_C-x_D)+thetaD),ZL);
 
 Z = series(Za2/2,parallel(Zs2,series(Za2/2,Z_c3)));
 
@@ -300,6 +301,7 @@ den = Z.*(sin(k*(x_A-x_B)+thetaB-thetaA)./(sin(thetaB).*sin(thetaA))) - 1i*rho*c
 Z_c1 = rho*c/S_B * (num./den);
 
 Z_in = Z_c1;
+%Z_in = parallel(Z_c1, 1i*w0*M); % sposta risonanze
 
 figure()
 plot(w/(2*pi), db(Z_in), LineWidth=1.4)
