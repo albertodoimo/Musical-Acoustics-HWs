@@ -1,11 +1,18 @@
- clear; close all; clc;
+clc
+clear 
+close all
 
-% DATA 
-
-if not(isfolder("plots"))
-    mkdir("plots")
+if not(isfolder("Plots"))
+    mkdir("Plots")
 end
 
+addpath('Plots')
+
+axlabelsize = 16;
+titlesize = 22;
+legendsize = 16;
+
+% DATA 
 L = 0.45;
 alpha = deg2rad(0.75); % rad
 c = 343; % m/s
@@ -27,80 +34,48 @@ Delta_6 = rout0*0.6;
 %Lp = L+Delta_6;
 Lp = L+Delta;
 theta_out = atan(k0*x_out);
-%theta1 = atan(k0*x1);
+theta_in = atan(k0*x_in);
 
 M = 0.04*rho./S_in;
 
-Zin = 1i*rho*c./S_in .* sin(k0*Lp) .* sin(theta_out) ./ sin(k0*Lp+theta_out) + 1i*w0*M;
+Zin = 1i*rho*c./S_in .* sin(k0*Lp) .* sin(theta_in) ./ sin(k0*Lp+theta_in) + 1i*w0*M;
 Zindb = db(Zin);
 
-% figure()
-% plot(r1, Zindb, LineWidth=1.4)
-% grid minor
-% xlabel('r_f [m]'); ylabel('|Z_{in}| [dB]')
-
-
-figure('Renderer', 'painters', 'Position', [100 100 1000 600]);%, 'OuterPosition', [100 100 1000 600]);
-plot(rout0, Zindb, LineWidth=1.4)
+% plot
+figure('Renderer', 'painters', 'Position', [10 10 800 300]);
+plot(rout0, Zindb,'b-',LineWidth=2);
 hold on
 
 r_out = rout0(Zindb == min(Zindb));
 xline(r_out, 'k--', LineWidth=1.4)
-text(r_out*1.03, min(Zindb)/1.1, ["$r_1=$"+num2str(r_out)+" m"], Interpreter="latex", FontSize=14)
+text(r_out*1.03, min(Zindb)/1.1, ["$r_{out}=$"+num2str(r_out)+" m"], Interpreter="latex",  FontSize=axlabelsize); 
 
-grid minor
-xlabel("$r_1\ [m]$", Interpreter='latex', FontSize=20); 
-ylabel("$|Z_{in}|\ [dB]$", Interpreter='latex', FontSize=20)
-title("Input impedance as function of $r_1$", Interpreter="latex", FontSize=25)
-saveas(gcf, './plots/ImpedanceR1.png');
-% 
-% % MAX SIZE %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% ax = gca;
-% outerpos = ax.OuterPosition;
-% ti = ax.TightInset; 
-% left = outerpos(1) + ti(1);
-% bottom = outerpos(2) + ti(2);
-% ax_width = outerpos(3) - ti(1) - ti(3);
-% ax_height = outerpos(4) - ti(2) - ti(4);
-% ax.Position = [left bottom ax_width ax_height];
-% % MAX SIZE %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+grid on
+xlabel("$r_{out}\ [m]$",'interpreter','latex', FontSize=axlabelsize); 
+ylabel("$|Z_{in}|\ [dB]$",'interpreter','latex', FontSize=axlabelsize);
+%title("Input impedance as function of $r_1$", Interpreter="latex", FontSize=25)
+%saveas(gcf, './plots/ImpedanceR1.png');
 
-% r1 = r1(Zindb == min(Zindb));
 r_in = r_out+L*tan(alpha);
 Delta = r_out*0.85;
 Delta_6 = r_out*0.6;
 Lp = L+Delta_6;
 Lp = L+Delta;
 
-%figure('Renderer', 'painters', 'Position', [100 100 1000 600]);
-%plot(r1, Zindb, LineWidth=1.4)
-%hold on
-%xline(r1_chos)
-%hold on 
-%text(r1_chos+0.001, 120, strcat('r_1 = ',num2str(r1_chos), " m"),'FontSize',11);
-%grid minor
-%xlabel('r_f [m]','interpreter','latex'); ylabel('|Z_{in}| [dB]','interpreter','latex')
-%title("Input impedance function of $r_1$",'interpreter','latex','FontSize',25)
-%filename='ZindB_r1';
-%saveas(gcf, [".\plots\"+filename+".png"]);
-
-%r1 = r1(Zindb == min(Zindb));
-%r2 = r1+L*tan(alpha);
-%Delta = r1*0.6;
-%Lp = L+Delta;
-
 xl = linspace(0, L, 1000);
 rl = linspace(r_in, r_out, 1000);
-figure('Position', [100 100 800 500])
-plot(xl, rl,'k-',LineWidth=1.2);
+
+figure('Renderer', 'painters', 'Position', [10 10 800 300]);
+plot(xl, rl,'k-',LineWidth=2);
 hold on
-plot(xl, -rl,'k-', LineWidth=1.2)
+plot(xl, -rl,'k-',LineWidth=2);
 hold on
 yline(0, 'k-.')
 ylim([-0.08, 0.08])
 grid on
-% xlabel("x [m]"); ylabel("|Z_{in}| [dB]")
-title('Shape of the recorder resonator')
+xlabel("x [m]",'interpreter','latex', FontSize=axlabelsize);
+%ylabel("|Z_{in}| [dB]",'interpreter','latex', FontSize=axlabelsize);
+%title('Shape of the recorder resonator',FontSize=titlesize, Interpreter='Latex')
 
 %% 2) first hole
 
@@ -124,8 +99,9 @@ theta1 = atan(k1*(x_out+delta1-Delta));  % x1+delta-Delta --> Lp_virt x position
 Zin = 1i*w1*M + 1i*rho*c/S_in .* sin(k1*Lp_virt).*sin(theta1) ./ sin(k1*Lp_virt+theta1);
 Zindb = db(Zin);
 
-figure('Renderer', 'painters', 'Position', [100 100 1000 600]);
-plot(D1, Zindb, LineWidth=1.4)
+%plot
+figure('Renderer', 'painters', 'Position', [10 10 800 300]);
+plot(D1, Zindb, 'b-',LineWidth=2);
 hold on
 
 % actual value
@@ -133,14 +109,15 @@ D1 = D1(Zindb == min(Zindb));
 hole1_coord = L-D1;
 delta1 = D1 + (Delta.^2./(D1+2*Delta));
 Lp_virt = Lp - delta1;
-xline(D1, 'k--', LineWidth=1.4)
+xline(D1, 'k--',LineWidth=2);
 
-text(D1*1.1, min(Zindb)/1.1, ["$D_1=$"+num2str(D1)+" m"], Interpreter="latex", FontSize=14)
+text(D1*1.2, min(Zindb)/1.05, ["$D_1=$"+num2str(D1)+" m"],'interpreter','latex', FontSize=axlabelsize);
 
-grid minor
-xlabel("$D_1\ [m]$", Interpreter='latex', FontSize=20); 
-ylabel("$|Z_{in}|\ [dB]$", Interpreter='latex', FontSize=20)
-title("Impedance as function of $D_1$", Interpreter="latex", FontSize=25)
+grid on
+xlabel("$D_1\ [m]$",'interpreter','latex', FontSize=axlabelsize);
+ylabel("$|Z_{in}|\ [dB]$",'interpreter','latex', FontSize=axlabelsize);
+%title("Impedance as function of $D_1$",'interpreter','latex', FontSize=titlesize);
+%saveas(gcf, './plots/ImpedanceD1.png');
 
 %% 3) second hole
 
@@ -158,32 +135,20 @@ theta1 = atan(k2*(x_out+delta1+delta2-Delta)); % x1+delta1+delta2-Delta --> Lp_v
 Zin = 1i*w2*M + (1i*rho*c/S_in .* sin(k2*Lp_virt_2).*sin(theta1) ./ sin(k2*Lp_virt_2+theta1));
 Zindb = db(Zin);
 
-figure('Renderer', 'painters', 'Position', [100 100 1000 600]);
-plot(D2, Zindb, LineWidth=1.4)
+figure('Renderer', 'painters', 'Position', [10 10 800 300]);
+plot(D2, Zindb, 'b-',LineWidth=2);
 hold on
 
 % actual values
 D2 = D2(Zindb == min(Zindb));
-xline(D2, 'k--', LineWidth=1.4)
-text(D2*1.1, min(Zindb)/1.1, ["$D_1=$"+num2str(D2)+" m"], Interpreter="latex", FontSize=14)
+xline(D2, 'k--',LineWidth=2);
+text(D2*1.1, min(Zindb)/1.1, ["$D_2=$"+num2str(D2)+" m"],'interpreter','latex', FontSize=axlabelsize);
 
-grid minor
-xlabel("$D_2\ [m]$", Interpreter='latex', FontSize=20); 
-ylabel("$|Z_{in}|\ [dB]$", Interpreter='latex', FontSize=20)
-title("Impedance as function of $D_2$", Interpreter="latex", FontSize=25)
-
-% MAX SIZE %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% ax = gca;
-% outerpos = ax.OuterPosition;
-% ti = ax.TightInset; 
-% left = outerpos(1) + ti(1);
-% bottom = outerpos(2) + ti(2);
-% ax_width = outerpos(3) - ti(1) - ti(3);
-% ax_height = outerpos(4) - ti(2) - ti(4);
-% ax.Position = [left bottom ax_width ax_height];
-% % MAX SIZE %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% saveas(gcf, './plots/ImpedanceD2.png');
-
+grid on
+xlabel("$D_2\ [m]$",'interpreter','latex', FontSize=axlabelsize);
+ylabel("$|Z_{in}|\ [dB]$",'interpreter','latex', FontSize=axlabelsize);
+%title("Impedance as function of $D_2$", Interpreter="latex", FontSize=25)
+%saveas(gcf, './plots/ImpedanceD2.png');
 
 hole2_coord = L-D2;
 delta2 = D2 - (D2*Delta)./(D2+Delta);
@@ -199,27 +164,32 @@ hole2 = linspace(hole2_coord-r_out, hole2_coord+r_out, 10);
 r3 = (L-hole1_coord+x_out)*tan(alpha);
 r4 = (L-hole2_coord+x_out)*tan(alpha);
 
-
-figure()
-plot(x, shape, 'k', LineWidth=1.4);
+% plot
+figure('Renderer', 'painters', 'Position', [10 10 800 300]);
+plot(x, shape, 'k-',LineWidth=2);
 hold on
-plot(x, -shape, 'k', LineWidth=1.4);
+plot(x, -shape, 'k-',LineWidth=2);
 hold on
-yline(0, 'k--')
+yline(0, 'k-.')
 hold on 
-xline(hole1_coord, 'b--');
+xline(hole1_coord, 'k--',LineWidth=2);
 hold on 
-xline(hole2_coord, 'b--');
+xline(hole2_coord, 'k--',LineWidth=2);
 hold on
 plot(hole1, ones(length(hole1), 1)*r3, LineWidth=5);
 hold on
 plot(hole2, ones(length(hole2), 1)*r4, LineWidth=5);
-grid minor
+grid on
 ylim([-0.2 0.2])
+xlabel("x [m]",'interpreter','latex', FontSize=axlabelsize);
+%text(hole1_coord, 0.08, ["$H_1=43.3 cm$"],'interpreter','latex', FontSize=axlabelsize);
+%text(hole2_coord-0.1, 0.08, ["$H_2=37.4 cm$"],'interpreter','latex', FontSize=axlabelsize);
+
+saveas(gcf, './plots/scheme0.47.png');
 
 %% punto 4 
 
-f = linspace(0,1000,10000);
+f = linspace(20,2000,10000);
 w = 2*pi*f;
 k = w./c;
 %ZL = (rho*c/S_out)*1/2*((k.*r_out).^2+1i*8/(3*pi)*k.*r_out);%Chaigne(12.126)
@@ -301,12 +271,16 @@ den = Z.*(sin(k*(x_A-x_B)+thetaB-thetaA)./(sin(thetaB).*sin(thetaA))) - 1i*rho*c
 Z_c1 = rho*c/S_B * (num./den);
 
 Z_in = Z_c1;
-%Z_in = parallel(Z_c1, 1i*w0*M); % sposta risonanze
+Z_in = parallel(Z_c1, 1i*w0*M); % sposta risonanze
 
-figure()
-plot(w/(2*pi), db(Z_in), LineWidth=1.4)
+figure('Renderer', 'painters', 'Position', [10 10 800 300]);
+plot(w/(2*pi), db(Z_in), 'b-',LineWidth=2);
+grid on
 
-
+xlabel("Frequency [Hz]",'interpreter','latex', FontSize=axlabelsize);
+ylabel("$|Z_{in}|\ [dB]$",'interpreter','latex', FontSize=axlabelsize);
+title("Closed-Closed case",'interpreter','latex', FontSize=titlesize);
+saveas(gcf, './plots/Zclcl.png');
 
 
 
